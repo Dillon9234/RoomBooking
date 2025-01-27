@@ -8,7 +8,16 @@ export default {
     "./node_modules/react-tailwindcss-datepicker/dist/index.esm.{js,ts}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      backdropBlur: {
+        md: '12px', // Customize the blur level
+      },
+    },
+  },
+  variants: {
+    extend: {
+      backdropBlur: ['responsive'],
+    },
   },
   plugins: [],
 } satisfies Config;
