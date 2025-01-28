@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css';
 import SelectedRoom from './SelectedRoom'
-import mongoose from 'mongoose'
+import mongoose, { mongo } from 'mongoose'
 
 
 const BookingForm = () => {
@@ -16,7 +16,6 @@ const BookingForm = () => {
     const [selectedBuilding, setSelectedBuilding] = useState('')
 
     const [rooms, setRooms] = useState([])
-    const [selectedRooms, setSelectedRooms] = useState([])
 
     const [dateRange, setDateRange] = useState<[Date|null,Date|null]>([null,null])
     const [startDate, endDate] = dateRange
@@ -28,6 +27,8 @@ const BookingForm = () => {
     const router = useRouter()
 
     const [okPressed, setOkPressed] = useState(false)
+
+    let selectedRooms: {date:Date, roomId:mongoose.Schema.Types.ObjectId}[] = []
 
     useEffect(() => {
         const fetchBuildings = async () => {
@@ -69,7 +70,7 @@ const BookingForm = () => {
 
     const handleChangeBuilding = (event:React.ChangeEvent<HTMLSelectElement>) => {
         setSelectedBuilding(event.target.value);
-        setSelectedRooms([])
+        selectedRooms = []
         setDateRange([null,null])
     };
 
@@ -87,37 +88,16 @@ const BookingForm = () => {
             if (isRoomBooked) {
                 return "Occupied";
             }
-            return "Available";
+            return "Unselected";
         }
-        return "Available"; 
+        return "Unselected"; 
     }
-    
-
-    const handleRemoveClick = (event:React.MouseEvent<HTMLButtonElement>) => {
-        console.log(event.currentTarget.dataset.room)
-    }
-
-    const handleAddClick = (event:React.MouseEvent<HTMLButtonElement>) => {
-        setSelectedRooms(selectedRooms)
-    }
-    
 
     const handleSubmit: React.FormEventHandler<HTMLFormElement> = async (event) => {
         event.preventDefault();
         setSubmitting(true)
         try{
-            const formData = new FormData(event.currentTarget);
-            const name = formData.get("name");
-            const response = await fetch('/api/building/new',{
-                method:'POST',
-                body: JSON.stringify({
-                    name,
-                })
-            })
-    
-            if(response.ok){
-                router.push('/')
-            }
+            console.log(selectedRooms)
         }catch(error){
             console.log(error)
         }finally{
@@ -279,10 +259,17 @@ const BookingForm = () => {
                                                 <div className='w-full h-full border-r border-b border-solid border-[#575757] p-2 m-0 items-center flex justify-center'>{formatDate(date)}</div>
                                             </td>
                                             {rooms.map((room:any) => {
+                                                const status = getRoomState(date, room._id)
                                                 return (
                                                     <td className='w-28 p-2' key={room._id}>
-                                                        <div className='flex justify-center' onClick={ () => { }}>
-                                                            <SelectedRoom status={getRoomState(date, room._id)} room={room}/>
+                                                        <div className='flex justify-center'>
+                                                            <SelectedRoom status={status} room={room} setSelected={ (isSelected:boolean) => { 
+                                                                if(isSelected){
+                                                                    selectedRooms.push({date, roomId: room._id})
+                                                                }else{
+                                                                    selectedRooms = selectedRooms.filter((cur) => { return !(cur.date === date && cur.roomId === room._id)})
+                                                                }
+                                                             }}/>
                                                         </div>
                                                     </td>
                                                 )
@@ -294,11 +281,11 @@ const BookingForm = () => {
                             </table>
                         </div>
                     </div>)
-            :<div className='w-full flex items-center justify-center bg-[#282828] rounded-lg'>No Data</div>}
+            :<div className='w-full flex items-center justify-center bg-[#282828] rounded-lg border border-[#575757]'>No Data</div>}
             
             
             <div className='flex flex-end gap-2 justify-end fixed bottom-5 right-5'>
-                <Link href='/' className='bg-orange-400 rounded-md p-1 font-mono'>
+                <Link href='/' className='bg-orange-400 rounded-md p-1 font-mono' onClick={() => {setDateRange([null,null])}}>
                     Cancel
                 </Link>
                 <button type='submit' className='bg-red-600 rounded-md p-1 font-mono' disabled={submitting}>
