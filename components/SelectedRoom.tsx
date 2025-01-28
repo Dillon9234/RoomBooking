@@ -10,9 +10,9 @@ const SelectedRoom = ({status, room, setSelected}:{status:string, room:mongoose.
   const [backgroundColorClass, setBackgroundColorClass] = useState('')
 
   const statusColorMap: { [key: string]: string } = {
-    Selected: "bg-[#38FF7E]",
-    Occupied: "bg-red-600",
-    Unselected: "bg-gray-300",
+    Selected: "bg-[#4b7dff]",
+    Occupied: "bg-[#3f3f3f]",
+    Unselected: "bg-[#8b8b8b]",
   };
 
   useEffect(() => {
@@ -41,7 +41,7 @@ const SelectedRoom = ({status, room, setSelected}:{status:string, room:mongoose.
     <div className={`${backgroundColorClass} rounded-lg aspect-square p-1 w-24 flex justify-center items-center text-black cursor-pointer`}
       onClick={handleClick}>
         <div>
-          {curStatus === 'Occupied' && "Occupied"}
+          {/* {curStatus === 'Occupied' && "Occupied"} */}
         </div>
     </div>
   )

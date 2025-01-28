@@ -1,5 +1,5 @@
+import BookedRooms from "@/models/bookedrooms";
 import Building from "@/models/building";
-import Day from "@/models/day";
 import Room from "@/models/room";
 import mongoose, { mongo } from "mongoose";
 
@@ -27,7 +27,7 @@ export const connectToDB = async() => {
         await Promise.all([
             Room.init(),      
             Building.init(),  
-            Day.init(),
+            BookedRooms.init(),
           ]);
     }catch (error){
         console.log(error)

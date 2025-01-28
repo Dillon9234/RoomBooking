@@ -28,7 +28,7 @@ const BookingForm = () => {
 
     const [okPressed, setOkPressed] = useState(false)
 
-    let selectedRooms: {date:Date, roomId:mongoose.Schema.Types.ObjectId}[] = []
+    let selectedRooms: {date:Date, roomId:mongoose.Schema.Types.ObjectId, by:string}[] = []
 
     useEffect(() => {
         const fetchBuildings = async () => {
@@ -75,20 +75,16 @@ const BookingForm = () => {
     };
 
     const getRoomState = (date: Date, roomId: mongoose.Types.ObjectId) => {
-        const day: any = roomsState.find((day: any) => {
-            const dayDate = new Date(day.date);
+        const existingBookedRoom: any = roomsState.find((bookedRoom: any) => {
+            const dayDate = new Date(bookedRoom.date);
             const isMatch = dayDate.getFullYear() === date.getFullYear() && 
                             dayDate.getMonth() === date.getMonth() && 
                             dayDate.getDate() === date.getDate();
-            return isMatch;
+            return isMatch && bookedRoom.roomId === roomId;
         });
     
-        if (day) {
-            const isRoomBooked = day.bookedRooms.some((booking: any) => booking.room._id.toString() === roomId.toString());
-            if (isRoomBooked) {
-                return "Occupied";
-            }
-            return "Unselected";
+        if (existingBookedRoom) {
+            return "Occupied";
         }
         return "Unselected"; 
     }
@@ -97,7 +93,15 @@ const BookingForm = () => {
         event.preventDefault();
         setSubmitting(true)
         try{
-            console.log(selectedRooms)
+            const response = await fetch('/api/bookroom',{
+                method:'POST',
+                body: JSON.stringify({bookings:selectedRooms})
+            })
+
+            if(response.ok){
+                console.log("booked")
+            }
+            fetchRoomsState()
         }catch(error){
             console.log(error)
         }finally{
@@ -219,7 +223,7 @@ const BookingForm = () => {
                 </div>               
             {rooms?.length>0 && dateArray?.length>0 && (okPressed) ? (
                     <div className='relative bg-[#282828] rounded-lg'>
-                        <div className='w-full absolute top-[0.05em] left-[0.05em] text-white'>
+                        <div className='w-full absolute top-[0.05em] left-[0.05em] text-white overflow-x-clip'>
                             <table className='z-20 table-fixed w-full absolute bg-transparent h-[2.6em]'>
                                 <thead className='text-white sticky top-0'>
                                     <tr>
@@ -265,7 +269,7 @@ const BookingForm = () => {
                                                         <div className='flex justify-center'>
                                                             <SelectedRoom status={status} room={room} setSelected={ (isSelected:boolean) => { 
                                                                 if(isSelected){
-                                                                    selectedRooms.push({date, roomId: room._id})
+                                                                    selectedRooms.push({date, roomId: room._id, by:"temp"})
                                                                 }else{
                                                                     selectedRooms = selectedRooms.filter((cur) => { return !(cur.date === date && cur.roomId === room._id)})
                                                                 }
