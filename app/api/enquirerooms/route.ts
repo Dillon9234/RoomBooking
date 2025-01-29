@@ -3,20 +3,20 @@ import { connectToDB } from "@/utils/database"
 import mongoose from "mongoose"
 
 export const POST = async (req:Request) => {
-    const {bookings}:{bookings:{date:string, roomId:mongoose.Types.ObjectId, bookedBy:string}[]} = await req.json()
+    const {bookings, by}:{bookings:{date:string, roomId:mongoose.Types.ObjectId}[], by:string} = await req.json()
 
     try{
         await connectToDB()
 
         let conflicts:{date:string, roomId:mongoose.Types.ObjectId, bookedBy:string}[]= []
 
-        console.log(bookings)
+        if(bookings.length == 0)
+            return new Response(JSON.stringify("No rooms inputted"),{status:400})
 
         for(const booking of bookings){
-            const formattedDate = new Date(booking.date)
-            const cur = await BookedRooms.findOne({date:formattedDate, roomId: booking.roomId})
+            const cur = await BookedRooms.findOne({date:booking.date, roomId: booking.roomId})
             if(cur){
-                conflicts.push(booking)
+                conflicts.push({date:booking.date,roomId:booking.roomId,bookedBy:by})
             }
         }
 

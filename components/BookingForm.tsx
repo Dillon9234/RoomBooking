@@ -1,12 +1,12 @@
 'use client'
 
 import Link from 'next/link'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css';
 import SelectedRoom from './SelectedRoom'
-import mongoose, { mongo } from 'mongoose'
+import mongoose from 'mongoose'
 
 
 const BookingForm = () => {
@@ -28,7 +28,10 @@ const BookingForm = () => {
 
     const [okPressed, setOkPressed] = useState(false)
 
-    let selectedRooms: {date:Date, roomId:mongoose.Schema.Types.ObjectId, by:string}[] = []
+    const [state, setState] = useState(Number)
+    const nameInput = useRef<HTMLInputElement>(null)
+
+    let selectedRooms: {date:string, roomId:mongoose.Schema.Types.ObjectId}[] = []
 
     useEffect(() => {
         const fetchBuildings = async () => {
@@ -40,7 +43,7 @@ const BookingForm = () => {
                 console.log(error)
             }
         }
-
+        setState(1)
         fetchBuildings()
     }, [])
 
@@ -74,40 +77,62 @@ const BookingForm = () => {
         setDateRange([null,null])
     };
 
-    const getRoomState = (date: Date, roomId: mongoose.Types.ObjectId) => {
-        const existingBookedRoom: any = roomsState.find((bookedRoom: any) => {
-            const dayDate = new Date(bookedRoom.date);
-            const isMatch = dayDate.getFullYear() === date.getFullYear() && 
-                            dayDate.getMonth() === date.getMonth() && 
-                            dayDate.getDate() === date.getDate();
-            return isMatch && bookedRoom.roomId === roomId;
+    const getRoomState = (date: string, roomId: mongoose.Types.ObjectId) => {
+        const existingBookedRoom:any = roomsState.find((bookedRoom: any) => {
+            return bookedRoom.date === date && bookedRoom.roomId === roomId;
         });
     
         if (existingBookedRoom) {
-            return "Occupied";
+            return {status:"Occupied", by:existingBookedRoom.by};
         }
-        return "Unselected"; 
+        return {status:"Unselected", by:''}; 
     }
 
     const handleSubmit: React.FormEventHandler<HTMLFormElement> = async (event) => {
         event.preventDefault();
         setSubmitting(true)
         try{
-            const response = await fetch('/api/bookroom',{
-                method:'POST',
-                body: JSON.stringify({bookings:selectedRooms})
-            })
+            if(selectedRooms.length<0)
+                return
+            if(state == 1){
+                const bookedBy = nameInput?.current?.value
 
-            if(response.ok){
-                console.log("booked")
+                if(!bookedBy){
+                    return
+                }
+                const response = await fetch('/api/bookroom',{
+                    method:'POST',
+                    body: JSON.stringify({bookings:selectedRooms, by:bookedBy})
+                })
+
+                if(response.ok){
+                    console.log("booked")
+                }
+            }else{
+                console.log(selectedRooms)
+                const response = await fetch('/api/bookroom',{
+                    method:'DELETE',
+                    body: JSON.stringify({bookings:selectedRooms})
+                })
+
+                if(response.ok){
+                    console.log("Deleted")
+                }
             }
-            fetchRoomsState()
         }catch(error){
             console.log(error)
         }finally{
             setSubmitting(false)
+            fetchRoomsState()
+            clearNameInput()
         }
       };
+
+      const clearNameInput = () => {
+        if (nameInput.current) {
+            nameInput.current.value = "";
+        }
+      }
 
       const generateDates = (start:Date, end:Date): Date[] => {
         const dateArray: Date[] = []
@@ -135,16 +160,16 @@ const BookingForm = () => {
   return (
         <form onSubmit={handleSubmit} 
         className='w-full flex flex-col gap-5 font-mono'>
-            <div className='max-w-md flex flex-row gap-10'>
-                <div>
+            <div className='w-full flex flex-row gap-10 justify-evenly md:justify-normal'>
+                <div className='flex flex-col justify-center items-center'>
                     <label className='block text-white font-mono py-4'>
-                        Select an options
+                        Building
                     </label>
                     <select name="building" value={selectedBuilding} id="buildingDropdown" onChange={handleChangeBuilding}
-                        className='bg-[#3f3f3f] border border-[#282828 rounded-lg focus:ring-[#006eff] focus:border-[#006eff]
-                        w-full p-2.5 '>
+                        className='bg-[#3f3f3f] border rounded-lg h-10 p-2 block border-black
+                        focus:ring-[#006eff] focus:border-[#006eff] border-collapse'>
                             <option defaultValue={undefined}>
-                                Select a building
+                                Select
                             </option>
                         {buildings && buildings.map((building:any) => (
                             <option key={building._id}value={building._id}>
@@ -153,14 +178,43 @@ const BookingForm = () => {
                         ))}
                     </select>
                 </div>
-                <div>
-                    <label className='block text-white font-mono py-4'>Select Date Range</label>
+                <div className='flex flex-col justify-center items-center md:items-end'>
+                    <label className='block text-white font-mono py-4'>Date Range</label>
                     <button type='button' onClick={() => {setShowDatePicker(!showDatePicker); setOkPressed(false)}}
-                        className='bg-[#3f3f3f] py-2 px-4 rounded-full hover:bg-[#8b8b8b]'>
-                            Select Dates
+                        className='bg-[#3f3f3f] py-2 px-4 h-10 rounded-lg hover:bg-[#575757] active:bg-[#8b8b8b] border border-black border-collapse'>
+                            Select
                     </button>
                 </div>
             </div>
+            <hr  className="h-px my-1 bg-[#282828] border-0"/>
+            <div className='flex flex-row flex-wrap gap-y-4 w-full gap-10 justify-center md:justify-normal'>
+                <div className='flex flex-row gap-10 justify-start my-2 bg-[#3f3f3f] px-4 py-2 rounded-lg h-10'>
+                    <div className="flex items-center" onClick={()=>{setState(1); selectedRooms = [];}}>
+                        <input id="inline-radio" type="radio" value="" name="inline-radio-group" className="cursor-pointer text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 focus:ring-0"
+                        defaultChecked disabled={!state}/>
+                        <label htmlFor="inline-radio" className="ms-2 cursor-pointer">Book</label>
+                    </div>
+                    <div className="flex items-center" onClick={()=>{setState(2); selectedRooms = [];}}>
+                        <input id="inline-2-radio" type="radio" value="" name="inline-radio-group" className="cursor-pointer text-[#9dabff] focus:ring-[#9dabff] focus:ring-0" disabled={!state}/>
+                        <label htmlFor="inline-2-radio" className="ms-2 cursor-pointer">Cancel</label>
+                    </div>
+                </div>
+                <div className='flex flex-end gap-10 justify-end my-2 h-10'>
+                    <Link href='/' className='bg-orange-400 rounded-md px-4 py-2 font-mono' onClick={() => {setDateRange([null,null]);clearNameInput()}}>
+                        Cancel
+                    </Link>
+                    <button type='submit' className='bg-red-600 rounded-md px-4 py-2 font-mono' disabled={submitting}>
+                        {submitting ? 'Submiting..':'Submit'}
+                    </button>
+                </div>
+            </div>
+            <hr className="h-px my-1 bg-[#282828] border-0"/>
+
+                {state === 1 && <div className="w-full">
+                    <input type="text" className="w-full flex h-10 rounded-lg bg-[#282828]
+                    text-[#8b8b8b] py-4 px-2" maxLength={10} placeholder="Club Name" ref={nameInput}/>
+                </div>}
+
                 <div className={`fixed inset-1 z-50 flex items-center  justify-center bg-black/30
                 transition-transform duration-200 ease-out scale-100 md:hidden bg-opacity-50 backdrop-blur-md rounded-lg
                 ${showDatePicker ? "scale-100 opacity-100" : "scale-95 opacity-0 pointer-events-none"}`}>
@@ -263,15 +317,15 @@ const BookingForm = () => {
                                                 <div className='w-full h-full border-r border-b border-solid border-[#575757] p-2 m-0 items-center flex justify-center'>{formatDate(date)}</div>
                                             </td>
                                             {rooms.map((room:any) => {
-                                                const status = getRoomState(date, room._id)
+                                                const status = getRoomState(formatDate(date), room._id)
                                                 return (
                                                     <td className='w-28 p-2' key={room._id}>
                                                         <div className='flex justify-center'>
-                                                            <SelectedRoom status={status} room={room} setSelected={ (isSelected:boolean) => { 
+                                                            <SelectedRoom status={status} globalState={state} room={room} setSelected={ (isSelected:boolean) => {
                                                                 if(isSelected){
-                                                                    selectedRooms.push({date, roomId: room._id, by:"temp"})
+                                                                    selectedRooms.push({date:formatDate(date), roomId: room._id})
                                                                 }else{
-                                                                    selectedRooms = selectedRooms.filter((cur) => { return !(cur.date === date && cur.roomId === room._id)})
+                                                                    selectedRooms = selectedRooms.filter((cur) => { return !(cur.date === formatDate(date) && cur.roomId === room._id)})
                                                                 }
                                                              }}/>
                                                         </div>
@@ -287,15 +341,6 @@ const BookingForm = () => {
                     </div>)
             :<div className='w-full flex items-center justify-center bg-[#282828] rounded-lg border border-[#575757]'>No Data</div>}
             
-            
-            <div className='flex flex-end gap-2 justify-end fixed bottom-5 right-5'>
-                <Link href='/' className='bg-orange-400 rounded-md p-1 font-mono' onClick={() => {setDateRange([null,null])}}>
-                    Cancel
-                </Link>
-                <button type='submit' className='bg-red-600 rounded-md p-1 font-mono' disabled={submitting}>
-                    {submitting ? 'Submiting..':'Submit'}
-                </button>
-            </div>
         </form>
   )
 }

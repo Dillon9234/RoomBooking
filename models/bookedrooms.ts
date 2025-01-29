@@ -2,7 +2,7 @@ import { models, model, Schema } from "mongoose";
 
 const BookedRoomsSchema = new Schema({
     date:{
-        type:Date,
+        type:String,
         required : true
     },
     roomId:{

@@ -3,20 +3,21 @@
 import mongoose from 'mongoose'
 import React, { useEffect, useState } from 'react'
 
-const SelectedRoom = ({status, room, setSelected}:{status:string, room:mongoose.Types.ObjectId, setSelected: (isSelected:boolean) => void}) => {
+const SelectedRoom = ({status, room, setSelected, globalState}:{status:{status:string,by:string}, room:mongoose.Types.ObjectId, setSelected: (isSelected:boolean) => void, globalState:number}) => {
 
   const [curStatus, setCurStatus] = useState('')
 
   const [backgroundColorClass, setBackgroundColorClass] = useState('')
 
   const statusColorMap: { [key: string]: string } = {
-    Selected: "bg-[#4b7dff]",
+    Selected: "bg-[#38FF7E]",
     Occupied: "bg-[#3f3f3f]",
     Unselected: "bg-[#8b8b8b]",
+    DeleteSelected: "bg-red-500"
   };
 
   useEffect(() => {
-    setCurStatus(status)
+    setCurStatus(status.status)
   },[status])
 
   useEffect(() => {
@@ -24,24 +25,36 @@ const SelectedRoom = ({status, room, setSelected}:{status:string, room:mongoose.
   },[curStatus])
 
   const handleClick = () => {
-    if(curStatus === 'Occupied') 
-      return; 
-    else if(curStatus==='Selected'){
-      setCurStatus('Unselected')
-      setSelected(false)
+    if(globalState == 1){
+      if(curStatus === 'Occupied') 
+        return; 
+      else if(curStatus==='Selected'){
+        setCurStatus('Unselected')
+        setSelected(false)
+      }
+      else {
+        setCurStatus('Selected')
+        setSelected(true)
+      }
+    }else{
+      if(curStatus === 'Occupied') {
+        setCurStatus('DeleteSelected')
+        setSelected(true); 
+      }
+      else if(curStatus==='DeleteSelected'){
+        setCurStatus('Occupied')
+        setSelected(false)
+      }
     }
-    else {
-      setCurStatus('Selected')
-      setSelected(true)
-    }
+    
   }
 
 
   return (
-    <div className={`${backgroundColorClass} rounded-lg aspect-square p-1 w-24 flex justify-center items-center text-black cursor-pointer`}
+    <div className={`${backgroundColorClass} rounded-lg aspect-square p-1 w-24 flex justify-center items-center cursor-pointer text-white break-all overflow-hidden`}
       onClick={handleClick}>
-        <div>
-          {/* {curStatus === 'Occupied' && "Occupied"} */}
+        <div className='whitespace-normal'>
+          {curStatus === 'Occupied' && status.by}
         </div>
     </div>
   )
