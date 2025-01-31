@@ -11,9 +11,9 @@ const SelectedRoom = ({status, room, setSelected, globalState}:{status:{status:s
 
   const statusColorMap: { [key: string]: string } = {
     Selected: "bg-[#38FF7E]",
-    Occupied: "bg-[#3f3f3f]",
+    Occupied: "bg-[#353535]",
     Unselected: "bg-[#8b8b8b]",
-    DeleteSelected: "bg-red-500"
+    DeleteSelected: "bg-[#38FF7E]"
   };
 
   useEffect(() => {
@@ -53,8 +53,8 @@ const SelectedRoom = ({status, room, setSelected, globalState}:{status:{status:s
   return (
     <div className={`${backgroundColorClass} rounded-lg aspect-square p-1 w-24 flex justify-center items-center cursor-pointer text-white break-all overflow-hidden`}
       onClick={handleClick}>
-        <div className='whitespace-normal'>
-          {curStatus === 'Occupied' && status.by}
+        <div className={`whitespace-normal ${curStatus === 'DeleteSelected'?'text-black':'text-white'}`}>
+          {(curStatus === 'Occupied' || curStatus === 'DeleteSelected') && status.by}
         </div>
     </div>
   )

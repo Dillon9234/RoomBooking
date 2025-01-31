@@ -159,14 +159,18 @@ const BookingForm = () => {
       const dateArray = startDate && endDate ? generateDates(startDate, endDate):[]
   return (
         <form onSubmit={handleSubmit} 
-        className='w-full flex flex-col gap-5 font-mono'>
+        className='w-full flex flex-col gap-2 font-mono'>
+            {state === 1 && <div className="w-full pt-3">
+                    <input type="text" className="w-full flex h-10 rounded-lg bg-[#282828]
+                    text-[#8b8b8b] px-2" maxLength={10} placeholder="Club Name" ref={nameInput}/>
+                </div>}
             <div className='w-full flex flex-row gap-10 justify-evenly md:justify-normal'>
                 <div className='flex flex-col justify-center items-center'>
-                    <label className='block text-white font-mono py-4'>
+                    <label className='block text-white font-mono py-2'>
                         Building
                     </label>
                     <select name="building" value={selectedBuilding} id="buildingDropdown" onChange={handleChangeBuilding}
-                        className='bg-[#3f3f3f] border rounded-lg h-10 p-2 block border-black
+                        className='bg-[#6c8cff] text-black border rounded-lg h-10 p-2 block border-black
                         focus:ring-[#006eff] focus:border-[#006eff] border-collapse'>
                             <option defaultValue={undefined}>
                                 Select
@@ -179,16 +183,16 @@ const BookingForm = () => {
                     </select>
                 </div>
                 <div className='flex flex-col justify-center items-center md:items-end'>
-                    <label className='block text-white font-mono py-4'>Date Range</label>
+                    <label className='block text-white font-mono py-2'>Date Range</label>
                     <button type='button' onClick={() => {setShowDatePicker(!showDatePicker); setOkPressed(false)}}
-                        className='bg-[#3f3f3f] py-2 px-4 h-10 rounded-lg hover:bg-[#575757] active:bg-[#8b8b8b] border border-black border-collapse'>
+                        className='bg-[#6c8cff] text-black py-2 px-4 h-10 rounded-lg hover:bg-[#575757] active:bg-[#8b8b8b] border border-black border-collapse'>
                             Select
                     </button>
                 </div>
             </div>
             <hr  className="h-px my-1 bg-[#282828] border-0"/>
             <div className='flex flex-row flex-wrap gap-y-4 w-full gap-10 justify-center md:justify-normal'>
-                <div className='flex flex-row gap-10 justify-start my-2 bg-[#3f3f3f] px-4 py-2 rounded-lg h-10'>
+                <div className='flex flex-row gap-10 justify-start my-2 bg-[#6c8cff] text-black px-4 py-2 rounded-lg h-10'>
                     <div className="flex items-center" onClick={()=>{setState(1); selectedRooms = [];}}>
                         <input id="inline-radio" type="radio" value="" name="inline-radio-group" className="cursor-pointer text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 focus:ring-0"
                         defaultChecked disabled={!state}/>
@@ -200,20 +204,15 @@ const BookingForm = () => {
                     </div>
                 </div>
                 <div className='flex flex-end gap-10 justify-end my-2 h-10'>
-                    <Link href='/' className='bg-orange-400 rounded-md px-4 py-2 font-mono' onClick={() => {setDateRange([null,null]);clearNameInput()}}>
+                    <Link href='/' className='bg-red-500 text-black rounded-md px-4 py-2 font-mono' onClick={() => {setDateRange([null,null]);clearNameInput()}}>
                         Cancel
                     </Link>
-                    <button type='submit' className='bg-red-600 rounded-md px-4 py-2 font-mono' disabled={submitting}>
+                    <button type='submit' className='bg-green-400 text-black rounded-md px-4 py-2 font-mono' disabled={submitting}>
                         {submitting ? 'Submiting..':'Submit'}
                     </button>
                 </div>
             </div>
             <hr className="h-px my-1 bg-[#282828] border-0"/>
-
-                {state === 1 && <div className="w-full">
-                    <input type="text" className="w-full flex h-10 rounded-lg bg-[#282828]
-                    text-[#8b8b8b] py-4 px-2" maxLength={10} placeholder="Club Name" ref={nameInput}/>
-                </div>}
 
                 <div className={`fixed inset-1 z-50 flex items-center  justify-center bg-black/30
                 transition-transform duration-200 ease-out scale-100 md:hidden bg-opacity-50 backdrop-blur-md rounded-lg
@@ -295,7 +294,14 @@ const BookingForm = () => {
                             </table>
                         </div>
                         <div className='w-full h-[30em] text-white border border-solid border-[#575757] rounded-lg
-                            overflow-auto' >
+                            overflow-auto
+                            md:[&::-webkit-scrollbar]:w-2 
+                            md:[&::-webkit-scrollbar]:h-2 
+                            md:[&::-webkit-scrollbar-thumb]:rounded-full
+                          md:[&::-webkit-scrollbar-track]:bg-[#575757]
+                          md:[&::-webkit-scrollbar-thumb]:bg-gray-400
+                            md:[&::-webkit-scrollbar-track]:rounded-full
+                            md:[&::-webkit-scrollbar-corner]:bg-transparent' >
                                 
                             <table className='z-10 table-fixed w-full h-full'>
                                 <thead className='text-white sticky top-0'>
