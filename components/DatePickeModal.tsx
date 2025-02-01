@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -14,7 +12,7 @@ interface DatePickerModalProps {
     setOkPressed: (pressed: boolean) => void;
 }
 
-const DatePickerModal: React.FC<DatePickerModalProps> = ({
+const DatePickerModal = ({
     showDatePicker,
     setShowDatePicker,
     startDate,
@@ -22,7 +20,7 @@ const DatePickerModal: React.FC<DatePickerModalProps> = ({
     setDateRange,
     fetchRoomsState,
     setOkPressed,
-}) => {
+}:DatePickerModalProps) => {
     return (
         <>
             {/* Mobile View Date Picker */}

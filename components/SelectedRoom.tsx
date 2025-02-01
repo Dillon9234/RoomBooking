@@ -3,7 +3,17 @@
 import mongoose from 'mongoose'
 import React, { useEffect, useState } from 'react'
 
-const SelectedRoom = ({status, room, setSelected, globalState}:{status:{status:string,by:string}, room:mongoose.Types.ObjectId, setSelected: (isSelected:boolean) => void, globalState:number}) => {
+interface selectedRoomsProps{
+  status:{
+    status:string,
+    by:string
+  },
+  room:mongoose.Types.ObjectId,
+  setSelected: (isSelected:boolean) => void,
+  globalState:number
+}
+
+const SelectedRoom = ({status, room, setSelected, globalState}:selectedRoomsProps) => {
 
   const [curStatus, setCurStatus] = useState('')
 
@@ -51,7 +61,7 @@ const SelectedRoom = ({status, room, setSelected, globalState}:{status:{status:s
 
 
   return (
-    <div className={`${backgroundColorClass} rounded-lg aspect-square p-1 w-24 flex justify-center items-center cursor-pointer text-white break-all overflow-hidden`}
+    <div className={`${backgroundColorClass} rounded-lg aspect-square p-1 w-10 flex justify-center items-center cursor-pointer text-white break-all overflow-hidden`}
       onClick={handleClick}>
         <div className={`whitespace-normal ${curStatus === 'DeleteSelected'?'text-black':'text-white'}`}>
           {(curStatus === 'Occupied' || curStatus === 'DeleteSelected') && status.by}

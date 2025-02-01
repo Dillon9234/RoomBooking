@@ -11,12 +11,13 @@ import mongoose from 'mongoose'
 import DatePickerModal from './DatePickeModal'
 import ToastMessage from './ToastMessage'
 import RoomTable from './BookingTable'
-
+import IBookedRooms from '@/interfaces/IBookedRooms'
+import IBuilding from '@/interfaces/IBuilding'
 
 const BookingForm = () => {
     const [submitting, setSubmitting] = useState(false)
 
-    const [buildings, setBuildings] = useState([])
+    const [buildings, setBuildings] = useState<{_id:mongoose.Types.ObjectId,name:string,rooms: mongoose.Types.ObjectId[]}[]>([])
     const [selectedBuilding, setSelectedBuilding] = useState('')
 
     const [rooms, setRooms] = useState([])
@@ -26,7 +27,7 @@ const BookingForm = () => {
 
     const [showDatePicker, setShowDatePicker] = useState(false)
 
-    const [roomsState, setRoomsState] = useState([])
+    const [roomsState, setRoomsState] = useState<IBookedRooms[]>([]);
 
     const router = useRouter()
 
@@ -55,6 +56,8 @@ const BookingForm = () => {
 
     useEffect(() => {
         const fetchRooms = async () => {
+            if(selectedBuilding === 'Select')
+                return
             try {
                 const response:Response = await fetch(`/api/building/${selectedBuilding}`)
                 const data = await response.json()
@@ -68,6 +71,7 @@ const BookingForm = () => {
     }, [selectedBuilding])
 
     const fetchRoomsState = async () => {
+        selectedRoomsRef.current = []
         try {
             const response:Response = await fetch(`/api/getbookedrooms`)
             const data = await response.json()
@@ -79,12 +83,11 @@ const BookingForm = () => {
 
     const handleChangeBuilding = (event:React.ChangeEvent<HTMLSelectElement>) => {
         setSelectedBuilding(event.target.value);
-        selectedRoomsRef.current = []
-        setDateRange([null,null])
+        fetchRoomsState()
     };
 
     const getRoomState = (date: string, roomId: mongoose.Types.ObjectId) => {
-        const existingBookedRoom:any = roomsState.find((bookedRoom: any) => {
+        const existingBookedRoom:IBookedRooms | undefined = roomsState.find((bookedRoom: IBookedRooms) => {
             return bookedRoom.date === date && bookedRoom.roomId === roomId;
         });
     
@@ -92,7 +95,7 @@ const BookingForm = () => {
             return {status:"Occupied", by:existingBookedRoom.by};
         }
 
-        const existingSelected:any = selectedRoomsRef.current.find((bookedRoom: any) => {
+        const existingSelected:{date:string, roomId:mongoose.Types.ObjectId} | undefined = selectedRoomsRef.current.find((bookedRoom: {date:string, roomId:mongoose.Types.ObjectId}) => {
             return bookedRoom.date === date && bookedRoom.roomId === roomId;
         })
 
@@ -140,7 +143,6 @@ const BookingForm = () => {
             setToast({ text: error.message, type: "error" });
         }finally{
             setSubmitting(false)
-            selectedRoomsRef.current = []
             fetchRoomsState()
             clearNameInput()
         }
@@ -182,8 +184,9 @@ const BookingForm = () => {
                             <option defaultValue={undefined}>
                                 Select
                             </option>
-                        {buildings && buildings.map((building:any) => (
-                            <option key={building._id}value={building._id}>
+                        {buildings && buildings.map((building:{_id:mongoose.Types.ObjectId, name:string,rooms:mongoose.Types.ObjectId[]}) => (
+                            
+                            <option key={building._id.toString()}value={building._id.toString()}>
                                 {building.name}
                             </option>
                         ))}
@@ -211,7 +214,7 @@ const BookingForm = () => {
                     </div>
                 </div>
                 <div className='flex flex-end gap-10 justify-end my-2 h-10'>
-                    <button type='button' className='bg-red-500 text-black rounded-md px-4 py-2 font-mono' onClick={() => {fetchRoomsState}}>
+                    <button type='button' className='bg-red-500 text-black rounded-md px-4 py-2 font-mono' onClick={() => {fetchRoomsState()}}>
                         Reset
                     </button>
                     <button type='submit' className='bg-green-400 text-black rounded-md px-4 py-2 font-mono'>

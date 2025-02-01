@@ -17,26 +17,22 @@ interface RoomTableProps {
 
 const formatDate = (date: Date): string => {
     const day = String(date.getDate()).padStart(2, '0');
-    const months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-    ];
-    const month = months[date.getMonth()];
-    const year = date.getFullYear();
-    return `${day}\n${month}\n${year}`;
-  };
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = String(date.getFullYear()).slice(-2);
+    return `${day}/${month}/${year}`;
+};
 
 const RoomTable = ({ rooms, dateArray, getRoomState, selected, state }:RoomTableProps) => {
     return (
         <div className='relative bg-[#282828] rounded-lg'>
             <div className='w-full absolute top-[0.05em] left-[0.05em] text-white overflow-x-clip'>
-                <table className='z-20 table-fixed w-full absolute bg-transparent h-[2.6em]'>
+                <table className='z-20 table-fixed w-full absolute bg-transparent h-[2.57em]'>
                     <thead className='text-white sticky top-0'>
                         <tr>
-                            <th className='w-[5em] h-1 left-7 top-5
+                            <th className='w-[2.49em] left-7 top-5
                             bg-[#282828] border-r border-b z-20 rounded-tl-lg border-solid border-[#575757]'>Dates</th>
                             {rooms.map((room) => (
-                                <th key={room.number} className='w-28 p-2'>
+                                <th key={room.number} className='w-10 p-2'>
                                     <div className='hidden'>
                                         {room.number}
                                     </div>
@@ -58,9 +54,9 @@ const RoomTable = ({ rooms, dateArray, getRoomState, selected, state }:RoomTable
                 <table className='z-10 table-fixed w-full h-full'>
                     <thead className='text-white sticky top-0'>
                         <tr>
-                            <th className='w-[5em] h-10 left-7 top-5'></th>
+                            <th className='w-10 h-10 left-7 top-5'></th>
                             {rooms.map((room) => (
-                                <th key={room.number} className='w-28 p-0 bg-[#282828]'>
+                                <th key={room.number} className='w-10 p-0 bg-[#282828]'>
                                     <div className='flex justify-center w-full h-full border-r border-b border-solid border-[#575757] p-2 m-0'>
                                         {room.number}
                                     </div>
@@ -71,15 +67,15 @@ const RoomTable = ({ rooms, dateArray, getRoomState, selected, state }:RoomTable
                     <tbody>
                         {dateArray.map((date) => (
                             <tr key={formatDate(date)}>
-                                <td className='w-28 p-0 justify-center items-center h-28 sticky left-0 bg-[#282828] text-center z-10'>
-                                    <div className='w-full h-full border-r border-b border-solid border-[#575757] p-2 m-0 items-center flex justify-center'>
-                                        {formatDate(date)}
+                                <td className='w-10 p-0 justify-center items-center h-10 sticky left-0 bg-[#282828] text-center z-10'>
+                                    <div className='w-full h-full border-r border-b border-solid border-[#575757] p-1 m-0 items-center flex justify-center'>
+                                        {formatDate(date).slice(0,5)}
                                     </div>
                                 </td>
                                 {rooms.map((room:any) => {
                                     const status = getRoomState(formatDate(date), room._id);
                                     return (
-                                        <td className='w-28 p-2' key={room._id}>
+                                        <td className='w-10 p-1' key={room._id}>
                                             <div className='flex justify-center'>
                                                 <SelectedRoom
                                                     status={status}
