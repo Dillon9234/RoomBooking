@@ -1,6 +1,7 @@
 import BookedRooms from "@/models/bookedrooms";
 import Building from "@/models/building";
 import Room from "@/models/room";
+import User from "@/models/user";
 import mongoose, { mongo } from "mongoose";
 
 let isConnected:boolean = false
@@ -28,6 +29,7 @@ export const connectToDB = async() => {
             Room.init(),      
             Building.init(),  
             BookedRooms.init(),
+            User.init()
           ]);
     }catch (error){
         console.log(error)

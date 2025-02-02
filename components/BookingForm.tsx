@@ -3,16 +3,13 @@
 import Link from 'next/link'
 import React, { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css';
-import SelectedRoom from './SelectedRoom'
 import ConfirmBox from './ConfirmBox'
 import mongoose from 'mongoose'
 import DatePickerModal from './DatePickeModal'
 import ToastMessage from './ToastMessage'
 import RoomTable from './BookingTable'
 import IBookedRooms from '@/interfaces/IBookedRooms'
-import IBuilding from '@/interfaces/IBuilding'
 
 const BookingForm = () => {
     const [submitting, setSubmitting] = useState(false)
