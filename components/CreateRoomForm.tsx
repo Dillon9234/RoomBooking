@@ -6,7 +6,7 @@ import ConfirmBox from './ConfirmBox'
 import ToastMessage from './ToastMessage'
 
 
-const BookingForm = () => {
+const CreateRoomForm = () => {
     const [submitting, setSubmitting] = useState(false)
 
     const [buildings, setBuildings] = useState([])
@@ -97,4 +97,4 @@ const BookingForm = () => {
   )
 }
 
-export default BookingForm
+export default CreateRoomForm

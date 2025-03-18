@@ -1,12 +1,20 @@
-import { logout } from '@/utils/actions'
-import React from 'react'
+// components/LogoutForm.tsx
+"use client";
+
+import { useTransition } from "react";
 
 const LogoutForm = () => {
-  return (
-    <form action={logout}>
-        <button>Logout</button>
-    </form>
-  )
-}
+    const [isPending, startTransition] = useTransition();
 
-export default LogoutForm
+    return (
+        <button
+            onClick={() =>{}}
+            disabled={isPending}
+            className="block py-2 px-3 rounded-sm md:border-0 md:p-0 text-white md:hover:text-red-500 hover:bg-gray-700 hover:text-white md:hover:bg-transparent"
+        >
+            {isPending ? "Logging out..." : "Logout"}
+        </button>
+    );
+};
+
+export default LogoutForm;

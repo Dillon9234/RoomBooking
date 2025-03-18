@@ -165,41 +165,9 @@ const BookingForm = () => {
       const dateArray = startDate && endDate ? generateDates(startDate, endDate):[]
   return (
         <form onSubmit={handleSubmit} 
-        className='w-full flex flex-col gap-2 font-mono'>
-            {state === 1 && <div className="w-full pt-3">
-                    <input type="text" className="w-full flex h-10 rounded-lg bg-[#282828]
-                    text-[#8b8b8b] px-2" maxLength={10} placeholder="Club Name" ref={nameInput}/>
-                </div>}
-            <div className='w-full flex flex-row gap-10 justify-evenly md:justify-normal'>
-                <div className='flex flex-col justify-center items-center'>
-                    <label className='block text-white font-mono py-2'>
-                        Building
-                    </label>
-                    <select name="building" value={selectedBuilding} id="buildingDropdown" onChange={handleChangeBuilding}
-                        className='bg-[#6c8cff] text-black border rounded-lg h-10 p-2 block border-black
-                        focus:ring-[#006eff] focus:border-[#006eff] border-collapse'>
-                            <option defaultValue={undefined}>
-                                Select
-                            </option>
-                        {buildings && buildings.map((building:{_id:mongoose.Types.ObjectId, name:string,rooms:mongoose.Types.ObjectId[]}) => (
-                            
-                            <option key={building._id.toString()}value={building._id.toString()}>
-                                {building.name}
-                            </option>
-                        ))}
-                    </select>
-                </div>
-                <div className='flex flex-col justify-center items-center md:items-end'>
-                    <label className='block text-white font-mono py-2'>Date Range</label>
-                    <button type='button' onClick={() => {setShowDatePicker(!showDatePicker); setOkPressed(false)}}
-                        className='bg-[#6c8cff] text-black py-2 px-4 h-10 rounded-lg hover:bg-[#575757] active:bg-[#8b8b8b] border border-black border-collapse'>
-                            Select
-                    </button>
-                </div>
-            </div>
-            <hr  className="h-px my-1 bg-[#282828] border-0"/>
-            <div className='flex flex-row flex-wrap gap-y-4 w-full gap-10 justify-center md:justify-normal'>
-                <div className='flex flex-row gap-10 justify-start my-2 bg-[#6c8cff] text-black px-4 py-2 rounded-lg h-10'>
+        className='w-full flex flex-col gap-2 font-mono items-center bg-black bg-opacity-50 p-10 rounded-lg border'>
+            <div className='flex flex-col items-center'>
+                <div className='flex flex-row gap-10 justify my-2 bg-transparent border text-white px-4 py-2 rounded-lg h-10 max-w-max'>
                     <div className="flex items-center" onClick={()=>{setState(1); selectedRoomsRef.current = [];}}>
                         <input id="inline-radio" type="radio" value="" name="inline-radio-group" className="cursor-pointer text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 focus:ring-0"
                         defaultChecked disabled={!state}/>
@@ -210,26 +178,55 @@ const BookingForm = () => {
                         <label htmlFor="inline-2-radio" className="ms-2 cursor-pointer">Cancel</label>
                     </div>
                 </div>
-                <div className='flex flex-end gap-10 justify-end my-2 h-10'>
-                    <button type='button' className='bg-red-500 text-black rounded-md px-4 py-2 font-mono' onClick={() => {fetchRoomsState()}}>
-                        Reset
-                    </button>
-                    <button type='submit' className='bg-green-400 text-black rounded-md px-4 py-2 font-mono'>
-                        Submit
+            </div>
+            <div className='w-full flex flex-wrap gap-5 justify-evenly'>
+                <div className='flex flex-col justify-center items-center w-52'>
+                    <select name="building" value={selectedBuilding} id="buildingDropdown" onChange={handleChangeBuilding}
+                        className='focus:bg-black focus:bg-opacity-50 bg-transparent text-white border rounded-lg h-10 p-2 w-full block border-white
+                        focus:ring-[#006eff] focus:border-[#006eff] border-collapse'>
+                            <option defaultValue={undefined}>
+                                Building
+                            </option>
+                        {buildings && buildings.map((building:{_id:mongoose.Types.ObjectId, name:string,rooms:mongoose.Types.ObjectId[]}) => (
+                            
+                            <option key={building._id.toString()}value={building._id.toString()}>
+                                {building.name}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+                <div className='flex flex-col justify-center items-center w-52'>
+                    <button type='button' onClick={() => {setShowDatePicker(!showDatePicker); setOkPressed(false)}}
+                        className='bg-transparent bg-[#6c8cff] text-white py-2 px-2 h-10 w-full rounded-lg hover:bg-[#575757] active:bg-[#8b8b8b] border border-white border-collapse'>
+                            Date Range
                     </button>
                 </div>
+                {state === 1 && <div className="py-2 w-52">
+                    <input type="text" className="max-w-max flex h-10 rounded-lg bg-[#282828]
+                    text-[#8b8b8b] px-2" maxLength={10} placeholder="Club Name" ref={nameInput}/>
+                </div>}
+                <div className='flex gap-y-4 gap-10 w-52'>
+                    <div className='flex flex-end gap-10 justify-end my-2 h-10'>
+                        <button type='button' className='bg-transparent text-white border rounded-md px-4 py-2 font-mono' onClick={() => {fetchRoomsState()}}>
+                            Reset
+                        </button>
+                        <button type='submit' className='bg-[#006eff] text-white border border-[#006eff] rounded-md px-4 py-2 font-mono'>
+                            Submit
+                        </button>
+                    </div>
+                </div>
             </div>
-            <hr className="h-px my-1 bg-[#282828] border-0"/>
+           
 
             <DatePickerModal 
                 showDatePicker={showDatePicker}
-                setShowDatePicker={setShowDatePicker}
-                startDate={dateRange[0]}
-                endDate={dateRange[1]}
-                setDateRange={setDateRange}
-                fetchRoomsState={fetchRoomsState}
-                setOkPressed={setOkPressed}
-            />
+                    setShowDatePicker={setShowDatePicker}
+                    startDate={dateRange[0]}
+                    endDate={dateRange[1]}
+                    setDateRange={setDateRange}
+                    fetchRoomsState={fetchRoomsState}
+                    setOkPressed={setOkPressed}
+                />
 
             <div>
                 <ConfirmBox

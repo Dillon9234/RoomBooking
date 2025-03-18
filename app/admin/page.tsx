@@ -1,12 +1,13 @@
-import CreateBuildingForm from '@/components/CreateBuildingForm'
-import CreateRoomForm from '@/components/CreateRoomForm'
+import BookingForm from '@/components/BookingForm'
 import React from 'react'
 
 const admindashboard = () => {
   return (
     <div className="p-5 text-white">
-      <div className="font-bold text-[#b2bbff] flex justify-center md:justify-normal">ADMIN DASHBOARD</div>
-      <CreateBuildingForm/>
+      <div className="flex text-5xl py-4 justify-center md:justify-normal">
+        Room Booking
+      </div>
+      <BookingForm/>
     </div>
   )
 }

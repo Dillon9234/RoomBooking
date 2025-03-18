@@ -24,16 +24,16 @@ const formatDate = (date: Date): string => {
 
 const RoomTable = ({ rooms, dateArray, getRoomState, selected, state }:RoomTableProps) => {
     return (
-        <div className='relative bg-[#282828] rounded-lg'>
+        <div className='relative bg-[#282828] rounded-lg w-full'>
             <div className='w-full absolute top-[0.05em] left-[0.05em] text-white overflow-x-clip'>
-                <table className='z-20 table-fixed w-full absolute bg-transparent h-[2.57em]'>
+                <table className='z-20 table-auto absolute h-[2.57em]'>
                     <thead className='text-white sticky top-0'>
                         <tr>
-                            <th className='w-[2.49em] left-7 top-5
-                            bg-[#282828] border-r border-b z-20 rounded-tl-lg border-solid border-[#575757]'>Dates</th>
+                            <th className='left-7 top-5
+                            border-r border-b z-20 rounded-tl-lg bg-[#282828] border-solid border-[#575757]'>Dates</th>
                             {rooms.map((room) => (
-                                <th key={room.number} className='w-10 p-2'>
-                                    <div className='hidden'>
+                                <th key={room.number} className='p-2'>
+                                    <div className='invisible'>
                                         {room.number}
                                     </div>
                                 </th>
@@ -51,13 +51,13 @@ const RoomTable = ({ rooms, dateArray, getRoomState, selected, state }:RoomTable
                 md:[&::-webkit-scrollbar-thumb]:bg-gray-400
                 md:[&::-webkit-scrollbar-track]:rounded-full
                 md:[&::-webkit-scrollbar-corner]:bg-transparent'>
-                <table className='z-10 table-fixed w-full h-full'>
+                <table className='z-10 table-auto h-full w-full'>
                     <thead className='text-white sticky top-0'>
                         <tr>
                             <th className='w-10 h-10 left-7 top-5'></th>
                             {rooms.map((room) => (
-                                <th key={room.number} className='w-10 p-0 bg-[#282828]'>
-                                    <div className='flex justify-center w-full h-full border-r border-b border-solid border-[#575757] p-2 m-0'>
+                                <th key={room.number} className='w-10 p-0'>
+                                    <div className='flex justify-center w-full h-full border-r border-b bg-[#282828] border-solid border-[#575757] p-2 m-0'>
                                         {room.number}
                                     </div>
                                 </th>
@@ -67,8 +67,8 @@ const RoomTable = ({ rooms, dateArray, getRoomState, selected, state }:RoomTable
                     <tbody>
                         {dateArray.map((date) => (
                             <tr key={formatDate(date)}>
-                                <td className='w-10 p-0 justify-center items-center h-10 sticky left-0 bg-[#282828] text-center z-10'>
-                                    <div className='w-full h-full border-r border-b border-solid border-[#575757] p-1 m-0 items-center flex justify-center'>
+                                <td className='w-10 p-0 justify-center items-center h-10 sticky left-0 text-center z-10'>
+                                    <div className='w-full h-full border-r border-b border-solid bg-[#282828] border-[#575757] p-1 m-0 items-center flex justify-center'>
                                         {formatDate(date).slice(0,5)}
                                     </div>
                                 </td>
