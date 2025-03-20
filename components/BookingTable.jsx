@@ -1,28 +1,14 @@
 import React, { RefObject } from 'react';
 import SelectedRoom from './SelectedRoom';
-import mongoose from 'mongoose';
 
-interface Room {
-    number: string;
-    _id: string;
-}
-
-interface RoomTableProps {
-    rooms: Room[];
-    dateArray: Date[];
-    getRoomState: (date: string, roomId: mongoose.Types.ObjectId) => {status:string,by:string};
-    selected: RefObject<{ date: string; roomId: mongoose.Types.ObjectId }[]>
-    state: number;
-}
-
-const formatDate = (date: Date): string => {
+const formatDate = (date) => {
     const day = String(date.getDate()).padStart(2, '0');
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const year = String(date.getFullYear()).slice(-2);
     return `${day}/${month}/${year}`;
 };
 
-const RoomTable = ({ rooms, dateArray, getRoomState, selected, state }:RoomTableProps) => {
+const RoomTable = ({ rooms, dateArray, getRoomState, selected, state }) => {
     return (
         <div className='relative bg-[#282828] rounded-lg w-full'>
             {/* <div className='w-full absolute top-[0.05em] left-[0.05em] text-white overflow-x-clip'>
@@ -72,7 +58,7 @@ const RoomTable = ({ rooms, dateArray, getRoomState, selected, state }:RoomTable
                                         {formatDate(date).slice(0,5)}
                                     </div>
                                 </td>
-                                {rooms.map((room:any) => {
+                                {rooms.map((room) => {
                                     const status = getRoomState(formatDate(date), room._id);
                                     return (
                                         <td className='w-10 p-1' key={room._id}>
@@ -81,7 +67,7 @@ const RoomTable = ({ rooms, dateArray, getRoomState, selected, state }:RoomTable
                                                     status={status}
                                                     globalState={state}
                                                     room={room}
-                                                    setSelected={(isSelected: boolean) => {
+                                                    setSelected={(isSelected) => {
                                                         if (isSelected) {
                                                             selected.current.push({ date: formatDate(date), roomId: room._id });
                                                         } else {

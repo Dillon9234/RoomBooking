@@ -1,8 +1,8 @@
 import { connectToDB } from "@/utils/database"
 import Building from "@/models/building"
 
-export const PATCH = async (req:Request,context:{params:{id:String}}) => {
-    const { name }:{name:String} = await req.json()
+export const PATCH = async (req,context) => {
+    const { name } = await req.json()
     const { id } = await context.params
 
     try{
@@ -21,7 +21,7 @@ export const PATCH = async (req:Request,context:{params:{id:String}}) => {
     }
 }
 
-export const DELETE = async (req:Request,context:{params:{id:String}}) => {
+export const DELETE = async (req,context) => {
     const { id } = await context.params
 
     try{

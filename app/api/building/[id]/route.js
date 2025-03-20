@@ -2,7 +2,7 @@ import { connectToDB } from "@/utils/database"
 import Building from "@/models/building"
 import Room from "@/models/room"
 
-export const GET = async (request:Request,context:{params:{id:String}}) => {
+export const GET = async (request,context) => {
     try{
         const { id } = await context.params
 

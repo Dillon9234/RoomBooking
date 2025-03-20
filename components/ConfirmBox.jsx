@@ -1,4 +1,4 @@
-export default function ConfirmBox({ isOpen, onConfirm, onCancel, text }: { isOpen: boolean, onConfirm: () => void, onCancel: () => void,text:string }) {
+export default function ConfirmBox({ isOpen, onConfirm, onCancel, text }) {
     if (!isOpen) return null;
 
     return (

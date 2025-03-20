@@ -1,7 +1,7 @@
 import BookedRooms from "@/models/bookedrooms"
 import { connectToDB } from "@/utils/database"
 
-export const GET = async (request:Request) => {
+export const GET = async (request) => {
     try{
         await connectToDB()
 

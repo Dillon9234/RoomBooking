@@ -2,16 +2,6 @@ import React from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-interface DatePickerModalProps {
-    showDatePicker: boolean;
-    setShowDatePicker: (show: boolean) => void;
-    startDate: Date | null;
-    endDate: Date | null;
-    setDateRange: (dates: [Date | null, Date | null]) => void;
-    fetchRoomsState: () => void;
-    setOkPressed: (pressed: boolean) => void;
-}
-
 const DatePickerModal = ({
     showDatePicker,
     setShowDatePicker,
@@ -20,7 +10,7 @@ const DatePickerModal = ({
     setDateRange,
     fetchRoomsState,
     setOkPressed,
-}:DatePickerModalProps) => {
+}) => {
     return (
         <>
             {/* Mobile View Date Picker */}
@@ -50,7 +40,7 @@ const DatePickerModal = ({
                 {/* DatePicker Component */}
                 <DatePicker
                     selected={startDate}
-                    onChange={(dates: [Date | null, Date | null]) => setDateRange(dates)}
+                    onChange={(dates) => setDateRange(dates)}
                     startDate={startDate}
                     endDate={endDate}
                     selectsRange
@@ -91,7 +81,7 @@ const DatePickerModal = ({
                 {/* DatePicker Component */}
                 <DatePicker
                     selected={startDate}
-                    onChange={(dates: [Date | null, Date | null]) => {
+                    onChange={(dates) => {
                         setDateRange(dates);
                         let [start, end] = dates;
                         if (start && end) {

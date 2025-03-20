@@ -1,13 +1,7 @@
 import { useState, useEffect } from "react";
 import { CheckCircle, XCircle, X } from "lucide-react";
 
-interface toastMessageProps{
-    text: string,
-    type: "success" | "error",
-    onClose: () => void
-}
-
-export default function ToastMessage({ text, type, onClose }: toastMessageProps) {
+export default function ToastMessage({ text, type, onClose }) {
     const [show, setShow] = useState(true);
     const [fadeOut, setFadeOut] = useState(false);
 

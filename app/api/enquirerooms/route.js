@@ -2,13 +2,13 @@ import BookedRooms from "@/models/bookedrooms"
 import { connectToDB } from "@/utils/database"
 import mongoose from "mongoose"
 
-export const POST = async (req:Request) => {
-    const {bookings, by}:{bookings:{date:string, roomId:mongoose.Types.ObjectId}[], by:string} = await req.json()
+export const POST = async (req) => {
+    const {bookings, by} = await req.json()
 
     try{
         await connectToDB()
 
-        let conflicts:{date:string, roomId:mongoose.Types.ObjectId, bookedBy:string}[]= []
+        let conflicts = []
 
         if(bookings.length == 0)
             return new Response(JSON.stringify("No rooms inputted"),{status:400})

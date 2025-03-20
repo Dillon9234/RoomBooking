@@ -12,12 +12,12 @@ const CreateRoomForm = () => {
     const [buildings, setBuildings] = useState([])
     const [selectedBuilding, setSelectedBuilding] = useState('')
 
-    const [toast, setToast] = useState<{ text: string; type: "success" | "error" } | null>(null);
+    const [toast, setToast] = useState(null);
     
     useEffect(() => {
         const fetchBuildings = async () => {
             try {
-                const response:Response = await fetch('/api/building')
+                const response = await fetch('/api/building')
                 const data = await response.json()
                 setBuildings(data)
             } catch (error) {
@@ -28,11 +28,11 @@ const CreateRoomForm = () => {
     }, [])
 
 
-    const handleChangeBuilding = (event:React.ChangeEvent<HTMLSelectElement>) => {
+    const handleChangeBuilding = (event) => {
         setSelectedBuilding(event.target.value);
     };
 
-    const handleSubmit: React.FormEventHandler<HTMLFormElement> = async (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
         if(submitting)
             return
@@ -41,14 +41,14 @@ const CreateRoomForm = () => {
 
     const confirmSubmission = async () => {
         try{
-        }catch(error:any){
+        }catch(error){
             setToast({ text: error.message, type: "error" });
         }finally{
             setSubmitting(false)
         }
     }
-      const generateDates = (start:Date, end:Date): Date[] => {
-        const dateArray: Date[] = []
+      const generateDates = (start, end) => {
+        const dateArray = []
         let cur = new Date(start)
         cur.setHours(0, 0, 0, 0);
         while(cur<=end){
@@ -71,7 +71,7 @@ const CreateRoomForm = () => {
                             <option defaultValue={undefined}>
                                 Select
                             </option>
-                        {buildings && buildings.map((building:any) => (
+                        {buildings && buildings.map((building) => (
                             <option key={building._id}value={building._id}>
                                 {building.name}
                             </option>

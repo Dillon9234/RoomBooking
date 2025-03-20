@@ -2,8 +2,8 @@ import BookedRooms from "@/models/bookedrooms"
 import { connectToDB } from "@/utils/database"
 import mongoose from "mongoose"
 
-export const POST = async (req:Request) => {
-    const { bookings, by}:{bookings:{date:string, roomId:mongoose.Types.ObjectId}[], by:string} = await req.json()
+export const POST = async (req) => {
+    const { bookings, by} = await req.json()
 
     try{
         if(bookings.length == 0)
@@ -33,8 +33,8 @@ export const POST = async (req:Request) => {
     }
 }
 
-export const DELETE = async (req:Request) => {
-    const { bookings}:{bookings:{date:string, roomId:mongoose.Types.ObjectId}[]} = await req.json()
+export const DELETE = async (req) => {
+    const { bookings} = await req.json()
 
     try{
         console.log(bookings)

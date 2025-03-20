@@ -2,8 +2,8 @@ import { connectToDB } from "@/utils/database"
 import Building from "@/models/building"
 import Room from "@/models/room"
 
-export const POST = async (req:Request,context:{params:{id:String}}) => {
-    const { number, capacity }:{number:Number,capacity:Number} = await req.json()
+export const POST = async (req) => {
+    const { number, capacity } = await req.json()
     const { id } = await context.params
 
     try{

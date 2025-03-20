@@ -1,4 +1,3 @@
-// components/LogoutForm.tsx
 "use client";
 
 import { useTransition } from "react";

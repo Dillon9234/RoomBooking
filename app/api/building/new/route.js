@@ -1,8 +1,8 @@
 import { connectToDB } from "@/utils/database"
 import Building from "@/models/building"
 
-export const POST = async (req:Request) => {
-    const { name }:{name:String} = await req.json()
+export const POST = async (req) => {
+    const { name } = await req.json()
 
     try{
         await connectToDB()

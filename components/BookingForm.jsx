@@ -1,46 +1,43 @@
 'use client'
 
-import Link from 'next/link'
 import React, { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import 'react-datepicker/dist/react-datepicker.css';
 import ConfirmBox from './ConfirmBox'
-import mongoose from 'mongoose'
 import DatePickerModal from './DatePickeModal'
 import ToastMessage from './ToastMessage'
 import RoomTable from './BookingTable'
-import IBookedRooms from '@/interfaces/IBookedRooms'
 
 const BookingForm = () => {
     const [submitting, setSubmitting] = useState(false)
 
-    const [buildings, setBuildings] = useState<{_id:mongoose.Types.ObjectId,name:string,rooms: mongoose.Types.ObjectId[]}[]>([])
+    const [buildings, setBuildings] = useState([])
     const [selectedBuilding, setSelectedBuilding] = useState('')
 
     const [rooms, setRooms] = useState([])
 
-    const [dateRange, setDateRange] = useState<[Date|null,Date|null]>([null,null])
+    const [dateRange, setDateRange] = useState([null,null])
     const [startDate, endDate] = dateRange
 
     const [showDatePicker, setShowDatePicker] = useState(false)
 
-    const [roomsState, setRoomsState] = useState<IBookedRooms[]>([]);
+    const [roomsState, setRoomsState] = useState([]);
 
     const router = useRouter()
 
     const [okPressed, setOkPressed] = useState(false)
 
-    const [state, setState] = useState(Number)
-    const nameInput = useRef<HTMLInputElement>(null)
+    const [state, setState] = useState(null)
+    const nameInput = useRef(null)
 
-    const selectedRoomsRef  = useRef<{date:string, roomId:mongoose.Types.ObjectId}[]>([]);
+    const selectedRoomsRef = useRef([]);
 
-    const [toast, setToast] = useState<{ text: string; type: "success" | "error" } | null>(null);
+    const [toast, setToast] = useState(null);
     
     useEffect(() => {
         const fetchBuildings = async () => {
             try {
-                const response:Response = await fetch('/api/building')
+                const response = await fetch('/api/building')
                 const data = await response.json()
                 setBuildings(data)
             } catch (error) {
@@ -56,7 +53,7 @@ const BookingForm = () => {
             if(selectedBuilding === 'Select')
                 return
             try {
-                const response:Response = await fetch(`/api/building/${selectedBuilding}`)
+                const response = await fetch(`/api/building/${selectedBuilding}`)
                 const data = await response.json()
                 setRooms(data.rooms)
             } catch (error) {
@@ -70,7 +67,7 @@ const BookingForm = () => {
     const fetchRoomsState = async () => {
         selectedRoomsRef.current = []
         try {
-            const response:Response = await fetch(`/api/getbookedrooms`)
+            const response = await fetch(`/api/getbookedrooms`)
             const data = await response.json()
             setRoomsState(data)
         } catch (error) {
@@ -78,13 +75,13 @@ const BookingForm = () => {
         }
     }
 
-    const handleChangeBuilding = (event:React.ChangeEvent<HTMLSelectElement>) => {
+    const handleChangeBuilding = (event) => {
         setSelectedBuilding(event.target.value);
         fetchRoomsState()
     };
 
-    const getRoomState = (date: string, roomId: mongoose.Types.ObjectId) => {
-        const existingBookedRoom:IBookedRooms | undefined = roomsState.find((bookedRoom: IBookedRooms) => {
+    const getRoomState = (date, roomId) => {
+        const existingBookedRoom = roomsState.find((bookedRoom) => {
             return bookedRoom.date === date && bookedRoom.roomId === roomId;
         });
     
@@ -92,7 +89,7 @@ const BookingForm = () => {
             return {status:"Occupied", by:existingBookedRoom.by};
         }
 
-        const existingSelected:{date:string, roomId:mongoose.Types.ObjectId} | undefined = selectedRoomsRef.current.find((bookedRoom: {date:string, roomId:mongoose.Types.ObjectId}) => {
+        const existingSelected = selectedRoomsRef.current.find((bookedRoom) => {
             return bookedRoom.date === date && bookedRoom.roomId === roomId;
         })
 
@@ -103,7 +100,7 @@ const BookingForm = () => {
         return {status:"Unselected", by:''}; 
     }
 
-    const handleSubmit: React.FormEventHandler<HTMLFormElement> = async (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
         if(submitting)
             return
@@ -136,7 +133,7 @@ const BookingForm = () => {
                 throw new Error(errorText || "Failed to process request.");
             }
             setToast({ text: state === 1 ? 'Booked successfully!' : 'Deleted successfully!', type: "success" });
-        }catch(error:any){
+        }catch(error){
             setToast({ text: error.message, type: "error" });
         }finally{
             setSubmitting(false)
@@ -151,8 +148,8 @@ const BookingForm = () => {
         }
       }
 
-      const generateDates = (start:Date, end:Date): Date[] => {
-        const dateArray: Date[] = []
+      const generateDates = (start, end) => {
+        const dateArray = []
         let cur = new Date(start)
         cur.setHours(0, 0, 0, 0);
         while(cur<=end){
@@ -187,7 +184,7 @@ const BookingForm = () => {
                             <option defaultValue={undefined}>
                                 Building
                             </option>
-                        {buildings && buildings.map((building:{_id:mongoose.Types.ObjectId, name:string,rooms:mongoose.Types.ObjectId[]}) => (
+                        {buildings && buildings.map((building) => (
                             
                             <option key={building._id.toString()}value={building._id.toString()}>
                                 {building.name}

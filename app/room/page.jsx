@@ -3,14 +3,14 @@
 import mongoose from "mongoose"
 import { useEffect, useState } from "react"
 
-const building = () => {
+const rooms = () => {
 
-    const [buildings, setBuildings] = useState<{_id:mongoose.Types.ObjectId,name:string,rooms: mongoose.Types.ObjectId[]}[]>([])
+    const [buildings, setBuildings] = useState([])
 
     useEffect(() => {
         const fetchBuildings = async () => {
             try {
-                const response:Response = await fetch('/api/building')
+                const response = await fetch('/api/building')
                 const data = await response.json()
                 setBuildings(data)
             } catch (error) {
@@ -38,4 +38,4 @@ const building = () => {
   )
 }
 
-export default building
+export default rooms

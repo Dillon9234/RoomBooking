@@ -3,8 +3,8 @@ import Building from "@/models/building"
 import Room from "@/models/room"
 import { useParams } from "next/navigation"
 
-export const PATCH = async (req:Request,context:{params:{id:String,roomid:String}}) => {
-    const { capacity }:{capacity:Number} = await req.json()
+export const PATCH = async (req,context) => {
+    const { capacity } = await req.json()
     const { id, roomid } = await context.params
 
     try{
@@ -23,7 +23,7 @@ export const PATCH = async (req:Request,context:{params:{id:String,roomid:String
     }
 }
 
-export const DELETE = async (req:Request,context:{params:{id:String,roomid:String}}) => {
+export const DELETE = async (req,context) => {
     const { id, roomid } = await context.params
 
     try{

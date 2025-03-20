@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation'
 const CreateBuildingForm = () => {
     const [submitting, setSubmitting] = useState(false)
     const router = useRouter()
-    const handleSubmit: React.FormEventHandler<HTMLFormElement> = async (event) => {
+    const handleSubmit= async (event) => {
         event.preventDefault();
         setSubmitting(true)
         try{
