@@ -25,7 +25,7 @@ const formatDate = (date: Date): string => {
 const RoomTable = ({ rooms, dateArray, getRoomState, selected, state }:RoomTableProps) => {
     return (
         <div className='relative bg-[#282828] rounded-lg w-full'>
-            <div className='w-full absolute top-[0.05em] left-[0.05em] text-white overflow-x-clip'>
+            {/* <div className='w-full absolute top-[0.05em] left-[0.05em] text-white overflow-x-clip'>
                 <table className='z-20 table-auto absolute h-[2.57em]'>
                     <thead className='text-white sticky top-0'>
                         <tr>
@@ -41,7 +41,7 @@ const RoomTable = ({ rooms, dateArray, getRoomState, selected, state }:RoomTable
                         </tr>
                     </thead>
                 </table>
-            </div>
+            </div> */}
             <div className='w-full h-[30em] text-white border border-solid border-[#575757] rounded-lg
                 overflow-auto
                 md:[&::-webkit-scrollbar]:w-2 

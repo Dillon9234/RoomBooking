@@ -1,5 +1,4 @@
 import BookedRooms from "@/models/bookedrooms"
-import Day from "@/models/bookedrooms"
 import { connectToDB } from "@/utils/database"
 import mongoose from "mongoose"
 
