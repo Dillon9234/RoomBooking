@@ -17,35 +17,11 @@ const RoomTable = ({
 }) => {
   return (
     <div className="relative bg-[#282828] rounded-lg w-full">
-      <div className="w-full absolute top-[0.05em] left-[0.05em] text-white overflow-x-clip">
-        {/* <table className="z-20 table-auto absolute h-[2.57em]">
-          <thead className="text-white sticky top-0">
-            <tr>
-              <th
-                className="left-7 top-5
-                            border-r border-b z-20 rounded-tl-lg bg-[#282828] border-solid border-[#575757]"
-              >
-                Dates
-              </th>
-              {rooms.map((room) => (
-                <th key={room.number} className="p-2">
-                  <div className="invisible">{room.number}</div>
-                </th>
-              ))}
-            </tr>
-          </thead>
-        </table> */}
-      </div>
       <div
         className="w-full h-[30em] text-white border border-solid border-[#575757] rounded-lg
                 overflow-auto
-                md:[&::-webkit-scrollbar]:w-2 
-                md:[&::-webkit-scrollbar]:h-2 
-                md:[&::-webkit-scrollbar-thumb]:rounded-full
-                md:[&::-webkit-scrollbar-track]:bg-[#575757]
-                md:[&::-webkit-scrollbar-thumb]:bg-gray-400
-                md:[&::-webkit-scrollbar-track]:rounded-full
-                md:[&::-webkit-scrollbar-corner]:bg-transparent"
+                [&::-webkit-scrollbar]:w-0
+                [&::-webkit-scrollbar]:h-0"
       >
         <table className="table-auto h-full w-full">
           <thead className="text-white">

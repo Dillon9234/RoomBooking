@@ -1,7 +1,6 @@
 import { connectToDB } from "@/utils/database"
 import Building from "@/models/building"
 import Room from "@/models/room"
-import { useParams } from "next/navigation"
 
 export const PATCH = async (req,context) => {
     const { capacity } = await req.json()

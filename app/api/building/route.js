@@ -1,8 +1,7 @@
 import { connectToDB } from "@/utils/database"
 import Building from "@/models/building"
-import Room from "@/models/room"
 
-export const GET = async (request) => {
+export const GET = async () => {
     try{
         await connectToDB()
 

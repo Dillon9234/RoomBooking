@@ -1,6 +1,5 @@
 import BookedRooms from "@/models/bookedrooms"
 import { connectToDB } from "@/utils/database"
-import mongoose from "mongoose"
 
 export const POST = async (req) => {
     const { bookings, by} = await req.json()
