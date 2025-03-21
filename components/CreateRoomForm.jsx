@@ -11,6 +11,7 @@ const CreateRoomForm = () => {
 
     const [buildings, setBuildings] = useState([])
     const [selectedBuilding, setSelectedBuilding] = useState('')
+    const [roomName,setRoomName] = useState(null)
 
     const [toast, setToast] = useState(null);
     
@@ -37,29 +38,36 @@ const CreateRoomForm = () => {
         if(submitting)
             return
         setSubmitting(true)
-    };
-
-    const confirmSubmission = async () => {
-        try{
-        }catch(error){
+        try {
+            if (!selectedBuilding) {
+              throw new Error("No building selected.");
+            }
+            let response;
+            const roomName = nameInput?.current?.value;
+            response = await fetch("/api/bookroom", {
+            method: "POST",
+            body: JSON.stringify({
+                bookings: selectedRoomsRef.current,
+                by: bookedBy,
+            }),
+            });
+            if (!response.ok) {
+              const errorText = await response.text();
+              throw new Error(errorText || "Failed to process request.");
+            }
+            setToast({
+              text: state === 1 ? "Booked successfully!" : "Deleted successfully!",
+              type: "success",
+            });
+          } catch (error) {
             setToast({ text: error.message, type: "error" });
-        }finally{
-            setSubmitting(false)
-        }
-    }
-      const generateDates = (start, end) => {
-        const dateArray = []
-        let cur = new Date(start)
-        cur.setHours(0, 0, 0, 0);
-        while(cur<=end){
-            dateArray.push(new Date(cur))
-            cur.setDate(cur.getDate()+1)
-        }
-        return dateArray
-      }
+          } finally {
+            setSubmitting(false);
+          }
+    };
   return (
         <form onSubmit={handleSubmit} 
-        className='w-full flex flex-col gap-2 font-mono'>
+        className='w-full flex flex-col gap-2 font-mono bg-black'>
             <div className='w-full flex flex-row gap-10 justify-evenly md:justify-normal'>
                 <div className='flex flex-col justify-center items-center'>
                     <label className='block text-white font-mono py-2'>
@@ -79,13 +87,17 @@ const CreateRoomForm = () => {
                     </select>
                 </div>
             </div>
+            <div className="py-2 w-52">
+            <input
+              type="text"
+              className="max-w-max flex h-10 rounded-lg bg-[#282828]
+                    text-[#8b8b8b] px-2"
+              maxLength={10}
+              placeholder="Number"
+              ref={roomName}
+            />
+            </div>
             <div>
-                <ConfirmBox
-                    onCancel={() => {setSubmitting(false)}}
-                    isOpen={submitting}
-                    onConfirm={confirmSubmission}
-                    text='Submit'
-                />
             </div>
             {toast && <ToastMessage 
             text={toast.text}

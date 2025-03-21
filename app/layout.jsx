@@ -6,7 +6,7 @@ export default async function RootLayout({
 }) {
   return (
     <html lang="en">
-        <body className='custom-gradient text-white'>
+        <body className='bg-black text-white'>
           <main>
             <Navbar/>
             {children}

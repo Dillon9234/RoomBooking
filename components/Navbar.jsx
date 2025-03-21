@@ -35,19 +35,20 @@ const Navbar = () => {
                                 Dashboard
                             </Link>
                         </li>
-                        <li>
-                            <Link href="/building" className="block py-2 px-3 rounded-sm md:border-0 md:p-0 text-white md:hover:text-blue-500 hover:bg-gray-700 hover:text-white md:hover:bg-transparent">
-                                Buildings
-                            </Link>
-                        </li>
-                        <li>
-                            <Link href="/room" className="block py-2 px-3 rounded-sm md:border-0 md:p-0 text-white md:hover:text-blue-500 hover:bg-gray-700 hover:text-white md:hover:bg-transparent">
-                                Rooms
-                            </Link>
-                        </li>
-                        {(true) ?<li>
-                            <LogoutForm/>
-                        </li>:
+                        
+                        {(true) ?<>
+                            <li>
+                                <Link href="/admin/buildings" className="block py-2 px-3 rounded-sm md:border-0 md:p-0 text-white md:hover:text-blue-500 hover:bg-gray-700 hover:text-white md:hover:bg-transparent">
+                                    Buildings
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href="/admin/rooms" className="block py-2 px-3 rounded-sm md:border-0 md:p-0 text-white md:hover:text-blue-500 hover:bg-gray-700 hover:text-white md:hover:bg-transparent">
+                                    Rooms
+                                </Link>
+                            </li>
+                            <li><LogoutForm/></li>
+                        </>:
                         <li>
                             <Link href="/login" className="block py-2 px-3 rounded-sm md:border-0 md:p-0 text-white md:hover:text-blue-500 hover:bg-gray-700 hover:text-white md:hover:bg-transparent">
                                 Login

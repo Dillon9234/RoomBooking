@@ -1,5 +1,7 @@
 'use client'
 
+import CreateBuildingForm from "@/components/CreateBuildingForm"
+import CreateRoomForm from "@/components/CreateRoomForm"
 import { useEffect, useState } from "react"
 
 const building = () => {
@@ -22,16 +24,8 @@ const building = () => {
 
   return (
     <div className="flex flex-wrap gap-10 p-10 justify-center">
-        {buildings?.length>0? (
-            buildings.map((building) =>(
-                <div key={building.name} className="bg-white text-black aspect-square
-                 w-28 h-28 rounded-lg
-                 flex items-center justify-center">
-                    {building.name}
-                </div>
-            ))
-        )
-        :<></>}
+        <CreateBuildingForm></CreateBuildingForm>
+        <CreateRoomForm/>
     </div>
     
   )
