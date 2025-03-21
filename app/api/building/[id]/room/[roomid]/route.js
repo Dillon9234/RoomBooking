@@ -3,8 +3,8 @@ import Building from "@/models/building"
 import Room from "@/models/room"
 
 export const PATCH = async (req,context) => {
-    const { capacity } = await req.json()
-    const { id, roomid } = await context.params
+    const { number, capacity } = await req.json()
+    const { roomid } = await context.params
 
     try{
         await connectToDB()
@@ -12,11 +12,14 @@ export const PATCH = async (req,context) => {
 
         if(!existingRoom) return new Response("room not found",{status:404})
 
+        existingRoom.number = number
         existingRoom.capacity = capacity
 
         await existingRoom.save()
 
-        return new Response(JSON.stringify(existingRoom), {status: 201})
+        const populatedRoom = await Room.findById(existingRoom._id).populate("building", "name");
+
+        return new Response(JSON.stringify(populatedRoom), {status: 201})
     }catch(error){
         return new Response("Failed to update room", { status:500})
     }

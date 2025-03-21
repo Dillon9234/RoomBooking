@@ -2,7 +2,7 @@ import { connectToDB } from "@/utils/database"
 import Building from "@/models/building"
 import Room from "@/models/room"
 
-export const POST = async (req) => {
+export const POST = async (req, context) => {
     const { number, capacity } = await req.json()
     const { id } = await context.params
 
@@ -31,9 +31,11 @@ export const POST = async (req) => {
 
         await Building.findByIdAndUpdate(id,{ $push: 
             { rooms: newRoom._id } },
-            { new: true })        
+            { new: true })     
+            
+        const populatedRoom = await Room.findById(newRoom._id).populate("building", "name");
 
-        return new Response(JSON.stringify(newRoom), {status: 201})
+        return new Response(JSON.stringify(populatedRoom), {status: 201})
     }catch(error){
         return new Response("Failed to create a new room", { status:500})
     }
