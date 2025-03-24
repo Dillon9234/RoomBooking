@@ -1,55 +1,50 @@
-'use client';
-import Link from 'next/link';
-import React, { useState } from 'react';
-import LogoutForm from './LogoutForm';
+import React from "react";
+import { Navbar, Nav, Container, Button } from "react-bootstrap";
+import { NavLink } from "react-router-dom";
+import LogoutForm from "./LogoutForm";
 
-const Navbar = () => {
-    const [isOpen, setIsOpen] = useState(false);
-    const toggleMenu = () => setIsOpen(!isOpen);
+const NavigationBar = () => {
+  return (
+    <Navbar expand="md" bg="dark" variant="dark" className="border-bottom">
+      <Container>
+        {/* Brand Logo */}
+        <Navbar.Brand as={NavLink} to="/">
+          Room Booking
+        </Navbar.Brand>
 
-    return (
-        <nav className="navbar navbar-expand-md navbar-dark bg-dark border-bottom">
-            <div className="container-fluid">
-                <Link className="navbar-brand" href="/">Room Booking</Link>
+        {/* Toggle Button for Mobile */}
+        <Navbar.Toggle aria-controls="navbarNav" />
 
-                <button 
-                    className="navbar-toggler" 
-                    type="button" 
-                    onClick={toggleMenu} 
-                    aria-controls="navbarNav" 
-                    aria-expanded={isOpen}
-                >
-                    <span className="navbar-toggler-icon"></span>
-                </button>
+        {/* Navbar Content */}
+        <Navbar.Collapse id="navbarNav">
+          <Nav className="ms-auto">
+            <Nav.Link as={NavLink} to="/" className="text-white">
+              Dashboard
+            </Nav.Link>
 
-                <div className={`collapse navbar-collapse ${isOpen ? 'show' : ''}`} id="navbarNav">
-                    <ul className="navbar-nav ms-auto">
-                        <li className="nav-item">
-                            <Link className="nav-link text-white" href="/">Dashboard</Link>
-                        </li>
-
-                        {(true) ? (
-                            <>
-                                <li className="nav-item">
-                                    <Link className="nav-link text-white" href="/admin/buildings">Buildings</Link>
-                                </li>
-                                <li className="nav-item">
-                                    <Link className="nav-link text-white" href="/admin/rooms">Rooms</Link>
-                                </li>
-                                <li className="nav-item">
-                                    <LogoutForm />
-                                </li>
-                            </>
-                        ) : (
-                            <li className="nav-item">
-                                <Link className="nav-link text-white" href="/login">Login</Link>
-                            </li>
-                        )}
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    );
+            {/* Conditional Rendering for Authenticated User */}
+            {true ? (
+              <>
+                <Nav.Link as={NavLink} to="/admin/buildings" className="text-white">
+                  Buildings
+                </Nav.Link>
+                <Nav.Link as={NavLink} to="/admin/rooms" className="text-white">
+                  Rooms
+                </Nav.Link>
+                <Nav.Item>
+                  <LogoutForm />
+                </Nav.Item>
+              </>
+            ) : (
+              <Nav.Link as={NavLink} to="/login" className="text-white">
+                Login
+              </Nav.Link>
+            )}
+          </Nav>
+        </Navbar.Collapse>
+      </Container>
+    </Navbar>
+  );
 };
 
-export default Navbar;
+export default NavigationBar;

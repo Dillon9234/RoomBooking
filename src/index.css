@@ -12,6 +12,14 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+html, body, #root {
+  height: 100%;
+  background-color: #212529 !important; /* Ensures dark background */
+  color: white;
+  margin: 0;
+  padding: 0;
+}
+
 
 a {
   font-weight: 500;

@@ -4,6 +4,13 @@
   padding: 2rem;
   text-align: center;
 }
+body, html {
+  background-color: #212529 !important; /* Bootstrap dark */
+  color: white;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
 
 .logo {
   height: 6em;
