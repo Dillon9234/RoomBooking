@@ -8,6 +8,7 @@ import Room from "./pages/room";
 import Layout from "./components/layout"; // Import Layout
 import Dashboard from "./pages/admin/dashboard";
 import Bookings from "./pages/admin/bookings";
+import BuildingRooms from "./pages/buildingrooms";
 
 function App() {
   return (
@@ -50,6 +51,8 @@ function App() {
             </Layout>
           }
         />
+        <Route path="/building/:buildingId/rooms" element={<BuildingRooms />} />
+
         <Route
           path="/room"
           element={

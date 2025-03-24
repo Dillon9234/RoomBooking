@@ -56,7 +56,7 @@ const Building = () => {
           {buildings.map((building) => (
             <Col key={building._id}>
               <Link 
-                to={`/buildings/${building._id}/rooms`} 
+                to={`/building/${building._id}/rooms`} 
                 className="text-decoration-none"
               >
                 <Card className="h-100 shadow-sm">

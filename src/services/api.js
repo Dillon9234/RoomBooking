@@ -77,3 +77,9 @@ export const deleteBuilding = async (id) => {
     throw error
   }
 }
+
+export const getBuildingRooms = async (id) => {
+  const response = await fetch(`${API_BASE_URL}/building/${id}/rooms`)
+  if (!response.ok) throw new Error('Failed to fetch rooms')
+  return response.json()
+}
