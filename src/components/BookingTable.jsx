@@ -12,14 +12,30 @@ const RoomTable = ({ rooms, dateArray, getRoomState, selected, state }) => {
   return (
     <div className="position-relative bg-dark rounded w-100">
       <div className="w-100" style={{ maxHeight: "30em", overflow: "auto" }}>
-        <table className="table table-dark table-bordered m-0">
+        <table className="table table-dark m-0" style={{ borderCollapse: "separate", borderSpacing: 0 }}>
           <thead>
             <tr>
-              <th className="text-center align-middle bg-secondary position-sticky top-0" style={{ left: 0, zIndex: 50 }}>
+              <th 
+                className="text-center align-middle bg-secondary position-sticky top-0 start-0" 
+                style={{ 
+                  left: 0, 
+                  zIndex: 100,
+                  border: "1px solid #dee2e6",
+                  borderSpacing: 0
+                }}
+              >
                 Dates
               </th>
               {rooms.map((room) => (
-                <th key={room.number} className="text-center align-middle bg-secondary position-sticky top-0">
+                <th 
+                  key={room.number} 
+                  className="text-center align-middle bg-secondary position-sticky top-0"
+                  style={{
+                    zIndex: 50,
+                    border: "1px solid #dee2e6",
+                    borderLeft: "none"
+                  }}
+                >
                   {room.number}
                 </th>
               ))}
@@ -28,13 +44,29 @@ const RoomTable = ({ rooms, dateArray, getRoomState, selected, state }) => {
           <tbody>
             {dateArray.map((date) => (
               <tr key={formatDate(date)}>
-                <td className="text-center align-middle bg-secondary position-sticky" style={{ left: 0, zIndex: 10 }}>
+                <td 
+                  className="text-center align-middle bg-secondary position-sticky" 
+                  style={{ 
+                    left: 0, 
+                    zIndex: 10,
+                    border: "1px solid #dee2e6",
+                    borderTop: "none"
+                  }}
+                >
                   {formatDate(date).slice(0, 5)}
                 </td>
                 {rooms.map((room) => {
                   const status = getRoomState(formatDate(date), room._id);
                   return (
-                    <td className="text-center align-middle" key={room._id}>
+                    <td 
+                      className="text-center align-middle" 
+                      key={room._id}
+                      style={{
+                        border: "1px solid #dee2e6",
+                        borderLeft: "none",
+                        borderTop: "none"
+                      }}
+                    >
                       <SelectedRoom
                         status={status}
                         globalState={state}
