@@ -1,222 +1,198 @@
-"use client"
+// app/admin/buildings/page.jsx
+"use client";
 import { useEffect, useState } from "react";
 import CreateBuildingForm from "@/components/CreateBuildingForm";
 import ToastMessage from "@/components/ToastMessage";
+import Link from "next/link";
+import 'bootstrap/dist/css/bootstrap.min.css';
 
-const Buildings = () => {
-    const [buildings, setBuildings] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [isFormOpen, setIsFormOpen] = useState(false);
-    const [selectedBuilding, setSelectedBuilding] = useState(null);
-    const [isEditing, setIsEditing] = useState(false);
-    const [toast, setToast] = useState(null);
-    
-    useEffect(() => {
-        const fetchBuildings = async () => {
-            try {
-                const response = await fetch("/api/building");
-                if (!response.ok) throw new Error("Failed to fetch buildings");
-                const data = await response.json();
-                setBuildings(data);
-            } catch (err) {
-                setError(err.message);
-                showToast(err.message, "error");
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchBuildings();
-    }, []);
+const AdminBuildings = () => {
+  const [buildings, setBuildings] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [selectedBuilding, setSelectedBuilding] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [toast, setToast] = useState(null);
 
-    useEffect(() => {
-        if (selectedBuilding && !isEditing) {
-            const handleClickOutside = (event) => {
-                const dropdownElements = document.querySelectorAll('[data-dropdown-menu]');
-                let clickedInsideDropdown = false;
-                
-                dropdownElements.forEach(element => {
-                    if (element.contains(event.target)) {
-                        clickedInsideDropdown = true;
-                    }
-                });
-                
-                const triggerButtons = document.querySelectorAll('[data-dropdown-trigger]');
-                triggerButtons.forEach(button => {
-                    if (button.contains(event.target)) {
-                        clickedInsideDropdown = true;
-                    }
-                });
-                
-                if (!clickedInsideDropdown && !isEditing) {
-                    setSelectedBuilding(null);
-                }
-            };
+  useEffect(() => {
+    fetchBuildings();
+  }, []);
 
-            document.addEventListener("mousedown", handleClickOutside);
-            return () => {
-                document.removeEventListener("mousedown", handleClickOutside);
-            };
-        }
-    }, [selectedBuilding, isEditing]);
+  const fetchBuildings = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch("/api/building");
+      if (!response.ok) throw new Error("Failed to fetch buildings");
+      const data = await response.json();
+      setBuildings(data);
+    } catch (err) {
+      setError(err.message);
+      showToast(err.message, "danger");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    const showToast = (message, type) => {
-        setToast({ text: message, type });
-    };
+  const showToast = (message, type) => {
+    setToast({ text: message, type });
+  };
 
-    const handleEditBuilding = (building) => {
-        setSelectedBuilding(building);
-        setIsEditing(true);
-        setIsFormOpen(true);
+  const handleEditBuilding = (building) => {
+    setSelectedBuilding(building);
+    setIsEditing(true);
+    setIsFormOpen(true);
+  };
+
+  const handleDeleteBuilding = async (building) => {
+    if (!confirm(`Are you sure you want to delete "${building.name}"?`)) {
+      return;
     }
 
-    const handleDeleteBuilding = async (building) => {
-        try {
-            const response = await fetch(`/api/building/${building._id}/edit`, {
-                method: 'DELETE',
-                headers: { 'Content-Type': 'application/json' },
-            });
-
-            if (response.ok) {
-                const index = buildings.findIndex((b) => b._id === building._id);
-                if (index !== -1) {
-                    buildings.splice(index, 1);
-                    setBuildings([...buildings]);
-                    showToast(`Building "${building.name}" deleted successfully`, "success");
-                }
-            } else {
-                const errorData = await response.json();
-                throw new Error(errorData.message || "Failed to delete building");
-            }
-        } catch (error) {
-            console.log(error);
-            showToast(error.message || "Failed to delete building", "error");
-        }
+    try {
+      const response = await fetch(`/api/building/${building._id}/edit`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+      });
+      
+      const data = await response.json();
+      
+      if (response.ok) {
+        setBuildings(buildings.filter((b) => b._id !== building._id));
+        showToast(`Building "${building.name}" deleted successfully`, "success");
+      } else {
+        throw new Error(data.message || "Failed to delete building");
+      }
+    } catch (error) {
+      console.error(error);
+      showToast(error.message || "Failed to delete building", "danger");
     }
+  };
 
-    return (
-        <div className="p-5 relative">
-            <div className="flex justify-end px-0 py-2">
-                <button
-                    name="create room"
-                    className="bg-white text-black px-2 py-1 flex items-center rounded-lg"
-                    onClick={() => {
-                        setSelectedBuilding(null);
-                        setIsEditing(false);
-                        setIsFormOpen(true);
-                    }}
-                >
-                    Create
-                </button>
-            </div>
+  const closeForm = () => {
+    setIsFormOpen(false);
+    setIsEditing(false);
+    setSelectedBuilding(null);
+  };
 
-            {isFormOpen && (
-                <CreateBuildingForm
-                    isOpen={isFormOpen}
-                    onClose={() => {setIsFormOpen(false); setIsEditing(false); setSelectedBuilding(null)}}
-                    onBuildingAdded={(newBuilding) => {
-                        setBuildings((prev) => [...prev, newBuilding]);
-                        showToast(`Building "${newBuilding.name}" created successfully`, "success");
-                    }}
-                    onEditBuilding={(updatedBuilding) => {
-                        setBuildings((prevBuildings) =>
-                            prevBuildings.map((b) =>
-                                b._id === updatedBuilding._id ? updatedBuilding : b
-                            )
-                        );
-                        showToast(`Building "${updatedBuilding.name}" updated successfully`, "success");
-                    }}
-                    onError={(errorMessage) => {
-                        showToast(errorMessage, "error");
-                    }}
-                    building={selectedBuilding}
-                />
-            )}
+  return (
+    <div className="container py-4">
+      <h1 className="mb-4">Building Management</h1>
+      
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <Link href="/admin" className="btn btn-outline-secondary">
+          &larr; Back to Admin
+        </Link>
+        <button
+          className="btn btn-primary"
+          onClick={() => {
+            setSelectedBuilding(null);
+            setIsEditing(false);
+            setIsFormOpen(true);
+          }}
+        >
+          Create Building
+        </button>
+      </div>
 
-            {loading && <p>Loading buildings...</p>}
-            {error && <p className="text-red-500">{error}</p>}
-            {!loading && !error && buildings.length === 0 && <p>No buildings available</p>}
+      {toast && (
+        <ToastMessage
+          message={toast.text}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
 
-            {buildings.length > 0 && (
-                <table className="w-full border-separate border rounded-lg border-spacing-0 border-[--border]">
-                    <thead>
-                        <tr>
-                            <th className="border-b px-4 py-2 text-left">Building Name</th>
-                            <th className="border-b px-4 py-2 text-left">Number of Rooms</th>
-                            <th className="border-b px-4 py-2"></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {buildings.map((building) => (
-                            <tr key={building._id || building.name}>
-                                <td className="px-4 py-2">{building.name}</td>
-                                <td className="px-4 py-2">{building.rooms?.length || "N/A"}</td>
-                                <td className="px-4 py-2">
-                                    <div className="relative inline-block">
-                                        <button
-                                            data-dropdown-trigger
-                                            className="flex items-center justify-center p-2 bg-black hover:bg-gray-900 transition-colors rounded-lg"
-                                            onClick={() =>
-                                                setSelectedBuilding(selectedBuilding === building ? null : building)
-                                            }
-                                        >
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                width="24"
-                                                height="24"
-                                                viewBox="0 0 24 24"
-                                                fill="none"
-                                                stroke="currentColor"
-                                                strokeWidth="2"
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                className="h-4 w-4 text-white"
-                                            >
-                                                <circle cx="12" cy="12" r="1"></circle>
-                                                <circle cx="19" cy="12" r="1"></circle>
-                                                <circle cx="5" cy="12" r="1"></circle>
-                                            </svg>
-                                        </button>
-                                        {selectedBuilding === building && !isEditing && (
-                                            <div
-                                                data-dropdown-menu
-                                                role="menu"
-                                                className="absolute right-0 mt-2 bg-black text-gray-100 z-50 min-w-[8rem] overflow-hidden rounded-md border border-gray-600 p-1 shadow-md animate-in"
-                                            >
-                                                <div className="px-2 py-1.5 text-sm font-semibold">Actions</div>
-                                                <div
-                                                    role="menuitem"
-                                                    className="hover:bg-gray-700 hover:text-gray-200 flex cursor-pointer items-center gap-2 rounded-sm px-2 py-1.5 text-sm transition-colors outline-none select-none"
-                                                    onClick={() => handleEditBuilding(building)}
-                                                >
-                                                    Edit
-                                                </div>
-                                                <div
-                                                    role="menuitem"
-                                                    className="hover:bg-gray-700 hover:text-gray-200 flex cursor-pointer items-center gap-2 rounded-sm px-2 py-1.5 text-sm transition-colors outline-none select-none"
-                                                    onClick={() => handleDeleteBuilding(building)}
-                                                >
-                                                    Delete
-                                                </div>
-                                            </div>
-                                        )}
-                                    </div>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            )}
+      {isFormOpen && (
+        <CreateBuildingForm
+          isOpen={isFormOpen}
+          onClose={closeForm}
+          onBuildingAdded={(newBuilding) => {
+            setBuildings((prev) => [...prev, newBuilding]);
+            showToast(`Building "${newBuilding.name}" created successfully`, "success");
+          }}
+          onEditBuilding={(updatedBuilding) => {
+            setBuildings((prevBuildings) =>
+              prevBuildings.map((b) => (b._id === updatedBuilding._id ? updatedBuilding : b))
+            );
+            showToast(`Building "${updatedBuilding.name}" updated successfully`, "success");
+          }}
+          onError={(errorMessage) => {
+            showToast(errorMessage, "danger");
+          }}
+          building={selectedBuilding}
+        />
+      )}
 
-            {toast && (
-                <ToastMessage
-                    text={toast.text}
-                    type={toast.type}
-                    onClose={() => setToast(null)}
-                />
-            )}
+      {loading && (
+        <div className="d-flex justify-content-center my-5">
+          <div className="spinner-border text-primary" role="status">
+            <span className="visually-hidden">Loading buildings...</span>
+          </div>
         </div>
-    );
+      )}
+
+      {error && !loading && (
+        <div className="alert alert-danger" role="alert">
+          {error}
+        </div>
+      )}
+
+      {!loading && !error && buildings.length === 0 && (
+        <div className="alert alert-info" role="alert">
+          No buildings available. Create a new building to get started.
+        </div>
+      )}
+
+      {buildings.length > 0 && !loading && (
+        <div className="card shadow-sm">
+          <div className="card-body p-0">
+            <div className="table-responsive">
+              <table className="table table-hover mb-0">
+                <thead className="table-dark">
+                  <tr>
+                    <th>Building Name</th>
+                    <th>Number of Rooms</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {buildings.map((building) => (
+                    <tr key={building._id}>
+                      <td>{building.name}</td>
+                      <td>{building.rooms?.length || 0}</td>
+                      <td>
+                        <div className="btn-group" role="group">
+                          <button 
+                            className="btn btn-sm btn-outline-primary me-2" 
+                            onClick={() => handleEditBuilding(building)}
+                          >
+                            Edit
+                          </button>
+                          <Link 
+                            href={`/admin/buildings/${building._id}/rooms`}
+                            className="btn btn-sm btn-outline-secondary me-2"
+                          >
+                            Manage Rooms
+                          </Link>
+                          <button 
+                            className="btn btn-sm btn-outline-danger" 
+                            onClick={() => handleDeleteBuilding(building)}
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 };
 
-export default Buildings;
+export default AdminBuildings;
