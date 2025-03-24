@@ -151,12 +151,12 @@ const Buildings = () => {
                   >
                     Edit
                   </Button>
-                  <Link 
+                  {/* <Link 
                     to={`/admin/buildings/${building._id}/rooms`}
                     className="btn btn-outline-secondary btn-sm me-2"
                   >
                     Manage Rooms
-                  </Link>
+                  </Link> */}
                   <Button 
                     variant="outline-danger" 
                     size="sm" 

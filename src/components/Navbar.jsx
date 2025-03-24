@@ -31,6 +31,9 @@ const NavigationBar = () => {
                 <Nav.Link as={NavLink} to="/admin/rooms" className="text-white">
                   Rooms
                 </Nav.Link>
+                <Nav.Link as={NavLink} to="/admin/bookings" className="text-white">
+                  Booking
+                </Nav.Link>
                 <Nav.Item>
                   <LogoutForm />
                 </Nav.Item>

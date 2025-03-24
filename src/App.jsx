@@ -7,6 +7,7 @@ import Login from "./pages/login";
 import Room from "./pages/room";
 import Layout from "./components/layout"; // Import Layout
 import Dashboard from "./pages/admin/dashboard";
+import Bookings from "./pages/admin/bookings";
 
 function App() {
   return (
@@ -62,6 +63,14 @@ function App() {
           element={
             <Layout>
               <Dashboard />
+            </Layout>
+          }
+        />
+        <Route
+          path="/admin/bookings"
+          element={
+            <Layout>
+              <Bookings />
             </Layout>
           }
         />

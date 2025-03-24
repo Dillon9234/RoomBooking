@@ -16,7 +16,7 @@ const Rooms = () => {
     useEffect(() => {
         const fetchRooms = async () => {
             try {
-                const response = await fetch("/api/rooms");
+                const response = await fetch("http://localhost:3000/api/rooms");
                 if (!response.ok) throw new Error("Failed to fetch rooms");
                 const data = await response.json();
                 setRooms(data);
@@ -42,7 +42,7 @@ const Rooms = () => {
 
     const handleDeleteRoom = async (room) => {
         try {
-            const response = await fetch(`/api/building/${room.building._id}/room/${room._id}`, {
+            const response = await fetch(`http://localhost:3000/api/building/${room.building._id}/room/${room._id}`, {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
             });
