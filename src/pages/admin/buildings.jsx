@@ -1,7 +1,10 @@
-"use client";
-import { useEffect, useState } from "react";
+// frontend/src/pages/AdminBuildings.jsx
+import React, { useEffect, useState } from "react";
+import { Container, Row, Col, Table, Button, Spinner, Alert } from "react-bootstrap";
+import { Link } from "react-router-dom";
 import CreateBuildingForm from "../../components/CreateBuildingForm";
 import ToastMessage from "../../components/ToastMessage";
+import { getBuildings, deleteBuilding } from "../../services/api";
 
 const Buildings = () => {
   const [buildings, setBuildings] = useState([]);
@@ -9,25 +12,24 @@ const Buildings = () => {
   const [error, setError] = useState(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [selectedBuilding, setSelectedBuilding] = useState(null);
-  const [isEditing, setIsEditing] = useState(false);
   const [toast, setToast] = useState(null);
 
   useEffect(() => {
-    const fetchBuildings = async () => {
-      try {
-        const response = await fetch("/api/building");
-        if (!response.ok) throw new Error("Failed to fetch buildings");
-        const data = await response.json();
-        setBuildings(data);
-      } catch (err) {
-        setError(err.message);
-        showToast(err.message, "danger");
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchBuildings();
   }, []);
+
+  const fetchBuildings = async () => {
+    try {
+      setLoading(true);
+      const data = await getBuildings();
+      setBuildings(data);
+    } catch (err) {
+      setError(err.message);
+      showToast(err.message, "danger");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const showToast = (message, type) => {
     setToast({ text: message, type });
@@ -35,75 +37,99 @@ const Buildings = () => {
 
   const handleEditBuilding = (building) => {
     setSelectedBuilding(building);
-    setIsEditing(true);
     setIsFormOpen(true);
   };
 
   const handleDeleteBuilding = async (building) => {
-    try {
-      const response = await fetch(`/api/building/${building._id}/edit`, {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-      });
+    if (!window.confirm(`Are you sure you want to delete "${building.name}"?`)) {
+      return;
+    }
 
-      if (response.ok) {
-        setBuildings(buildings.filter((b) => b._id !== building._id));
-        showToast(`Building "${building.name}" deleted successfully`, "success");
-      } else {
-        throw new Error("Failed to delete building");
-      }
+    try {
+      await deleteBuilding(building._id);
+      setBuildings(buildings.filter((b) => b._id !== building._id));
+      showToast(`Building "${building.name}" deleted successfully`, "success");
     } catch (error) {
-      console.log(error);
+      console.error(error);
       showToast(error.message || "Failed to delete building", "danger");
     }
   };
 
-  return (
-    <div className="container py-4">
-      <div className="d-flex justify-content-end mb-3">
-        <button
-          className="btn btn-primary"
-          onClick={() => {
-            setSelectedBuilding(null);
-            setIsEditing(false);
-            setIsFormOpen(true);
-          }}
-        >
-          Create Building
-        </button>
-      </div>
+  const closeForm = () => {
+    setIsFormOpen(false);
+    setSelectedBuilding(null);
+  };
 
-      {isFormOpen && (
-        <CreateBuildingForm
-          isOpen={isFormOpen}
-          onClose={() => {
-            setIsFormOpen(false);
-            setIsEditing(false);
-            setSelectedBuilding(null);
-          }}
-          onBuildingAdded={(newBuilding) => {
-            setBuildings((prev) => [...prev, newBuilding]);
-            showToast(`Building "${newBuilding.name}" created successfully`, "success");
-          }}
-          onEditBuilding={(updatedBuilding) => {
-            setBuildings((prevBuildings) =>
-              prevBuildings.map((b) => (b._id === updatedBuilding._id ? updatedBuilding : b))
-            );
-            showToast(`Building "${updatedBuilding.name}" updated successfully`, "success");
-          }}
-          onError={(errorMessage) => {
-            showToast(errorMessage, "danger");
-          }}
-          building={selectedBuilding}
+  return (
+    <Container className="py-4">
+      <h1 className="mb-4">Building Management</h1>
+      
+      <Row className="mb-4">
+        <Col className="d-flex justify-content-between align-items-center">
+          <Link to="/admin" className="btn btn-outline-secondary">
+            &larr; Back to Admin
+          </Link>
+          <Button
+            variant="primary"
+            onClick={() => {
+              setSelectedBuilding(null);
+              setIsFormOpen(true);
+            }}
+          >
+            Create Building
+          </Button>
+        </Col>
+      </Row>
+
+      {toast && (
+        <ToastMessage
+          message={toast.text}
+          type={toast.type}
+          onClose={() => setToast(null)}
         />
       )}
 
-      {loading && <p>Loading buildings...</p>}
-      {error && <p className="text-danger">{error}</p>}
-      {!loading && !error && buildings.length === 0 && <p>No buildings available</p>}
+      <CreateBuildingForm
+        isOpen={isFormOpen}
+        onClose={closeForm}
+        onBuildingAdded={(newBuilding) => {
+          setBuildings((prev) => [...prev, newBuilding]);
+          showToast(`Building "${newBuilding.name}" created successfully`, "success");
+        }}
+        onEditBuilding={(updatedBuilding) => {
+          setBuildings((prevBuildings) =>
+            prevBuildings.map((b) => (b._id === updatedBuilding._id ? updatedBuilding : b))
+          );
+          showToast(`Building "${updatedBuilding.name}" updated successfully`, "success");
+        }}
+        onError={(errorMessage) => {
+          showToast(errorMessage, "danger");
+        }}
+        building={selectedBuilding}
+      />
 
-      {buildings.length > 0 && (
-        <table className="table table-bordered">
+      {loading && (
+        <div className="d-flex justify-content-center my-5">
+          <Spinner animation="border" variant="primary" role="status">
+            <span className="visually-hidden">Loading buildings...</span>
+          </Spinner>
+        </div>
+      )}
+
+      {error && !loading && (
+        <Alert variant="danger">
+          {error}
+        </Alert>
+      )}
+
+      {!loading && !error && buildings.length === 0 && (
+        <Alert variant="info">
+          No buildings available. Create a new building to get started.
+        </Alert>
+      )}
+
+      {buildings.length > 0 && !loading && (
+        <Table responsive hover bordered>
           <thead className="table-dark">
             <tr>
               <th>Building Name</th>
@@ -113,23 +139,38 @@ const Buildings = () => {
           </thead>
           <tbody>
             {buildings.map((building) => (
-              <tr key={building._id || building.name}>
+              <tr key={building._id}>
                 <td>{building.name}</td>
-                <td>{building.rooms?.length || "N/A"}</td>
+                <td>{building.rooms?.length || 0}</td>
                 <td>
-                  <button className="btn btn-warning btn-sm me-2" onClick={() => handleEditBuilding(building)}>
+                  <Button 
+                    variant="outline-primary" 
+                    size="sm" 
+                    className="me-2" 
+                    onClick={() => handleEditBuilding(building)}
+                  >
                     Edit
-                  </button>
-                  <button className="btn btn-danger btn-sm" onClick={() => handleDeleteBuilding(building)}>
+                  </Button>
+                  <Link 
+                    to={`/admin/buildings/${building._id}/rooms`}
+                    className="btn btn-outline-secondary btn-sm me-2"
+                  >
+                    Manage Rooms
+                  </Link>
+                  <Button 
+                    variant="outline-danger" 
+                    size="sm" 
+                    onClick={() => handleDeleteBuilding(building)}
+                  >
                     Delete
-                  </button>
+                  </Button>
                 </td>
               </tr>
             ))}
           </tbody>
-        </table>
+        </Table>
       )}
-    </div>
+    </Container>
   );
 };
 
