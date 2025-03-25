@@ -156,7 +156,7 @@ const AdminBuildingRooms = () => {
 
     return (
         <Container fluid className="py-4 px-4" style={{ backgroundColor: "#212529", minHeight: "100vh" }}>
-            <Link to="/buildings" className="btn btn-outline-light mb-4 d-inline-flex align-items-center">
+            <Link to="/admin/buildings" className="btn btn-outline-light mb-4 d-inline-flex align-items-center">
                 <BsArrowLeft className="me-2" /> Back to Buildings
             </Link>
             

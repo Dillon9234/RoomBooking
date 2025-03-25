@@ -110,22 +110,38 @@ const BookingForm = () => {
     event.preventDefault();
     
     const result = await Swal.fire({
-      title: 'Submit Application?',
-      html: 'You are about to submit your application for <b>Frontend Developer</b>. Please review your information before confirming.',
+      title: 'Confirm Booking',
+      html: 'Are you sure you want to submit this booking request?',
       icon: 'question',
       showCancelButton: true,
-      confirmButtonText: 'Submit Application',
-      cancelButtonText: 'Review Changes',
+      confirmButtonText: 'Confirm Booking',
+      cancelButtonText: 'Review Details',
       reverseButtons: true,
+      background: '#2a2a2a',
+      color: '#fff',
       customClass: {
         confirmButton: 'btn btn-success',
-        cancelButton: 'btn btn-outline-secondary'
-      }
+        cancelButton: 'btn btn-outline-secondary',
+        title: 'text-white',
+        htmlContainer: 'text-white'
+      },
+      buttonsStyling: false
     });
   
     if (result.isConfirmed) {
       await confirmSubmission();
-      Swal.fire('Success!', 'Your application has been submitted.', 'success');
+      Swal.fire({
+        title: 'Success!',
+        text: 'Your booking has been confirmed.',
+        icon: 'success',
+        background: '#2a2a2a',
+        color: '#fff',
+        customClass: {
+          confirmButton: 'btn btn-primary',
+          title: 'text-white'
+        },
+        buttonsStyling: false
+      });
     }
   };
 
