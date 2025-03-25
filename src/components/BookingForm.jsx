@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import ConfirmBox from "./ConfirmBox";
 import DatePickerModal from "./DatePickeModal";
 import ToastMessage from "./ToastMessage";
 import RoomTable from "./BookingTable";
@@ -125,7 +124,6 @@ const BookingForm = () => {
     });
   
     if (result.isConfirmed) {
-      // Process form submission
       await confirmSubmission();
       Swal.fire('Success!', 'Your application has been submitted.', 'success');
     }
@@ -321,16 +319,6 @@ const BookingForm = () => {
         setDateRange={setDateRange}
         fetchRoomsState={fetchRoomsState}
         setOkPressed={setOkPressed}
-      />
-
-      <ConfirmBox
-        onCancel={() => {
-          setSubmitting(false);
-          selectedRoomsRef.current = [];
-        }}
-        isOpen={submitting}
-        onConfirm={confirmSubmission}
-        text="Submit"
       />
       
       {rooms?.length > 0 && dateArray?.length > 0 && okPressed ? (
