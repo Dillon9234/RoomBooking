@@ -126,7 +126,7 @@ const BookingForm = () => {
   
     if (result.isConfirmed) {
       // Process form submission
-      await submitForm();
+      await confirmSubmission();
       Swal.fire('Success!', 'Your application has been submitted.', 'success');
     }
   };
