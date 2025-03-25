@@ -66,47 +66,6 @@ const BuildingRooms = () => {
         if (buildingId) fetchBuildingRooms();
     }, [buildingId]);
 
-    const handleDeleteRoom = async (roomId) => {
-        try {
-            const response = await fetch(`http://localhost:3000/api/building/${buildingId}/room/${roomId}`, {
-                method: "DELETE",
-            });
-
-            if (!response.ok) throw new Error("Failed to delete room");
-
-            setBuilding((prev) => {
-                if (!prev) return null;
-                return {
-                    ...prev,
-                    rooms: prev.rooms.filter((room) => room._id !== roomId),
-                };
-            });
-        } catch (error) {
-            console.error("Delete Room Error:", error);
-            setError(error.message);
-        }
-    };
-
-    const handleEditRoom = (updatedRoom) => {
-        setBuilding((prev) => {
-            if (!prev) return null;
-            return {
-                ...prev,
-                rooms: prev.rooms.map((room) => (room._id === updatedRoom._id ? updatedRoom : room)),
-            };
-        });
-    };
-
-    const handleAddRoom = (newRoom) => {
-        setBuilding((prev) => {
-            if (!prev) return { rooms: [newRoom] };
-            return {
-                ...prev,
-                rooms: [...(prev.rooms || []), newRoom],
-            };
-        });
-    };
-
     if (loading) {
         return (
             <Container className="d-flex justify-content-center align-items-center" style={{ minHeight: "50vh" }}>
@@ -168,19 +127,6 @@ const BuildingRooms = () => {
                             {building.rooms?.length || 0} Room{building.rooms?.length !== 1 ? 's' : ''} Available
                         </p>
                     </Col>
-                    <Col xs="auto">
-                        <Button
-                            variant="primary"
-                            size="lg"
-                            className="d-flex align-items-center"
-                            onClick={() => {
-                                setSelectedRoom(null);
-                                setShowRoomModal(true);
-                            }}
-                        >
-                            <BsPlusCircle className="me-2" /> Add New Room
-                        </Button>
-                    </Col>
                 </Row>
             </div>
 
@@ -209,7 +155,7 @@ const BuildingRooms = () => {
                             >
                                 <Card.Body className="d-flex flex-column text-white">
                                     <div className="d-flex justify-content-between align-items-center mb-3">
-                                        <Badge bg="primary" pill className="px-3 py-2 fs-6">Room {room.number}</Badge>
+                                        <Badge bg="primary" pill className="px-3 py-2 fs-6">{building.name}</Badge>
                                         <Badge bg="secondary" pill className="d-flex align-items-center px-3 py-2">
                                             <BsPeople className="me-1" /> {room.capacity}
                                         </Badge>
@@ -246,17 +192,6 @@ const BuildingRooms = () => {
                     ))}
                 </Row>
             )}
-
-            {/* Room Creation/Edit Modal */}
-            <CreateRoomForm
-                isOpen={showRoomModal}
-                onClose={() => setShowRoomModal(false)}
-                onRoomAdded={handleAddRoom}
-                onEditRoom={handleEditRoom}
-                onError={setError}
-                room={selectedRoom}
-                buildingId={buildingId}
-            />
         </Container>
     );
 };
