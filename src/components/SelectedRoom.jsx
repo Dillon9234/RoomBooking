@@ -44,9 +44,17 @@ const SelectedRoom = ({ status, room, setSelected, globalState }) => {
 
   return (
     <div
-      className={`d-flex justify-content-center align-items-center text-white rounded p-2 w-50 h-50 ${backgroundColorClass} text-truncate mx-auto`} 
+      className={`d-flex justify-content-center align-items-center text-white rounded ${backgroundColorClass} text-truncate`} 
       onClick={handleClick}
-      style={{ cursor: 'pointer', aspectRatio: '1 / 1', minWidth: '40px', minHeight: '40px' }}
+      style={{ 
+        cursor: 'pointer', 
+        width: '40px',
+        height: '40px',
+        maxWidth: '40px',
+        maxHeight: '40px',
+        margin: '0 auto',
+        fontSize: '0.8rem'
+      }}
     >
       <div className={`${curStatus === 'DeleteSelected' ? 'text-dark' : 'text-white'}`}>
         {(curStatus === 'Occupied' || curStatus === 'DeleteSelected') && status.by}
