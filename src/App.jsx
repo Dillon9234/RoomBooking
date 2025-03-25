@@ -51,7 +51,7 @@ function App() {
             </Layout>
           }
         />
-        <Route path="/building/:buildingId/rooms" element={<BuildingRooms />} />
+        <Route path="/building/:buildingId/rooms" element={<Layout><BuildingRooms /></Layout>} />
 
         <Route
           path="/room"

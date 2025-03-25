@@ -2,14 +2,31 @@
 
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { Container, Row, Col, Card, Button, Modal, Spinner, Alert } from "react-bootstrap";
-import CreateRoomForm from "../components/CreateRoomForm"; // Assume this exists
+import { Container, Row, Col, Card, Button, Spinner, Alert, Badge } from "react-bootstrap";
+import CreateRoomForm from "../components/CreateRoomForm";
+import { Link } from 'react-router-dom';
+import { BsDoorOpen, BsPeople, BsArrowLeft, BsPlusCircle } from 'react-icons/bs';
+
+// Card hover effect styles
+const cardStyle = {
+  transition: 'all 0.3s ease',
+  backgroundColor: '#2a2a2a',
+  border: 'none',
+  borderRadius: '10px',
+  overflow: 'hidden'
+};
+
+const cardHoverStyle = {
+  transform: 'translateY(-10px)',
+  boxShadow: '0 15px 30px rgba(0, 0, 0, 0.3)'
+};
 
 const BuildingRooms = () => {
-    const { buildingId } = useParams(); // ✅ Extract building ID from URL
+    const { buildingId } = useParams();
     const [building, setBuilding] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [hoveredCard, setHoveredCard] = useState(null);
 
     // Modal State
     const [showRoomModal, setShowRoomModal] = useState(false);
@@ -19,12 +36,25 @@ const BuildingRooms = () => {
         const fetchBuildingRooms = async () => {
             try {
                 setLoading(true);
-                const response = await fetch(`/api/building/${buildingId}/rooms`);
+                const response = await fetch(`http://localhost:3000/api/building/${buildingId}`);
 
                 if (!response.ok) throw new Error("Failed to fetch building rooms");
 
                 const data = await response.json();
-                setBuilding(data.building);
+                
+                if (data && data.building) {
+                    if (!data.building.rooms) {
+                        data.building.rooms = [];
+                    }
+                    setBuilding(data.building);
+                } else if (data) {
+                    if (!data.rooms) {
+                        data.rooms = [];
+                    }
+                    setBuilding(data);
+                } else {
+                    throw new Error("Invalid response format");
+                }
             } catch (err) {
                 console.error(err);
                 setError(err.message);
@@ -38,17 +68,19 @@ const BuildingRooms = () => {
 
     const handleDeleteRoom = async (roomId) => {
         try {
-            const response = await fetch(`/api/building/${buildingId}/room/${roomId}`, {
+            const response = await fetch(`http://localhost:3000/api/building/${buildingId}/room/${roomId}`, {
                 method: "DELETE",
             });
 
             if (!response.ok) throw new Error("Failed to delete room");
 
-            // Remove the deleted room from state
-            setBuilding((prev) => ({
-                ...prev,
-                rooms: prev.rooms.filter((room) => room._id !== roomId),
-            }));
+            setBuilding((prev) => {
+                if (!prev) return null;
+                return {
+                    ...prev,
+                    rooms: prev.rooms.filter((room) => room._id !== roomId),
+                };
+            });
         } catch (error) {
             console.error("Delete Room Error:", error);
             setError(error.message);
@@ -56,70 +88,143 @@ const BuildingRooms = () => {
     };
 
     const handleEditRoom = (updatedRoom) => {
-        setBuilding((prev) => ({
-            ...prev,
-            rooms: prev.rooms.map((room) => (room._id === updatedRoom._id ? updatedRoom : room)),
-        }));
+        setBuilding((prev) => {
+            if (!prev) return null;
+            return {
+                ...prev,
+                rooms: prev.rooms.map((room) => (room._id === updatedRoom._id ? updatedRoom : room)),
+            };
+        });
     };
 
     const handleAddRoom = (newRoom) => {
-        setBuilding((prev) => ({
-            ...prev,
-            rooms: [...prev.rooms, newRoom],
-        }));
+        setBuilding((prev) => {
+            if (!prev) return { rooms: [newRoom] };
+            return {
+                ...prev,
+                rooms: [...(prev.rooms || []), newRoom],
+            };
+        });
     };
 
     if (loading) {
         return (
-            <Container className="text-center mt-5">
-                <Spinner animation="border" role="status">
-                    <span className="visually-hidden">Loading...</span>
-                </Spinner>
+            <Container className="d-flex justify-content-center align-items-center" style={{ minHeight: "50vh" }}>
+                <div className="text-center">
+                    <Spinner animation="border" role="status" variant="primary" style={{ width: '3rem', height: '3rem' }}>
+                        <span className="visually-hidden">Loading...</span>
+                    </Spinner>
+                    <p className="mt-3 text-muted">Loading building details...</p>
+                </div>
             </Container>
         );
     }
 
     if (error) {
         return (
-            <Container>
-                <Alert variant="danger">{error}</Alert>
+            <Container className="mt-5">
+                <Alert variant="danger" className="shadow-sm">
+                    <Alert.Heading>Error Loading Building</Alert.Heading>
+                    <p>{error}</p>
+                    <hr />
+                    <div className="d-flex justify-content-end">
+                        <Link to="/buildings" className="btn btn-outline-danger">
+                            Return to Buildings
+                        </Link>
+                    </div>
+                </Alert>
+            </Container>
+        );
+    }
+
+    if (!building) {
+        return (
+            <Container className="mt-5">
+                <Alert variant="warning" className="shadow-sm">
+                    <Alert.Heading>Building Not Found</Alert.Heading>
+                    <p>The requested building could not be found or loaded.</p>
+                    <hr />
+                    <div className="d-flex justify-content-end">
+                        <Link to="/buildings" className="btn btn-outline-warning">
+                            Return to Buildings
+                        </Link>
+                    </div>
+                </Alert>
             </Container>
         );
     }
 
     return (
-        <Container>
-            <Row className="mb-4 align-items-center">
-                <Col>
-                    <h1>{building?.name} - Rooms</h1>
-                </Col>
-                <Col className="text-end">
-                    <Button
-                        variant="primary"
-                        onClick={() => {
-                            setSelectedRoom(null);
-                            setShowRoomModal(true);
-                        }}
-                    >
-                        Add New Room
-                    </Button>
-                </Col>
-            </Row>
+        <Container fluid className="py-4 px-4" style={{ backgroundColor: "#212529", minHeight: "100vh" }}>
+            <Link to="/buildings" className="btn btn-outline-light mb-4 d-inline-flex align-items-center">
+                <BsArrowLeft className="me-2" /> Back to Buildings
+            </Link>
+            
+            <div className="bg-dark p-4 rounded-3 shadow-lg mb-4">
+                <Row className="align-items-center">
+                    <Col>
+                        <h1 className="display-5 fw-bold text-white">{building.name || 'Building'}</h1>
+                        <p className="lead text-light opacity-75">
+                            {building.rooms?.length || 0} Room{building.rooms?.length !== 1 ? 's' : ''} Available
+                        </p>
+                    </Col>
+                    <Col xs="auto">
+                        <Button
+                            variant="primary"
+                            size="lg"
+                            className="d-flex align-items-center"
+                            onClick={() => {
+                                setSelectedRoom(null);
+                                setShowRoomModal(true);
+                            }}
+                        >
+                            <BsPlusCircle className="me-2" /> Add New Room
+                        </Button>
+                    </Col>
+                </Row>
+            </div>
 
-            {building?.rooms?.length === 0 ? (
-                <Alert variant="info">No rooms found in this building.</Alert>
+            {!building.rooms || building.rooms.length === 0 ? (
+                <Alert variant="info" className="shadow-sm">
+                    <div className="d-flex align-items-center">
+                        <BsDoorOpen className="me-3" size={24} />
+                        <div>
+                            <Alert.Heading>No Rooms Available</Alert.Heading>
+                            <p className="mb-0">This building doesn't have any rooms yet. Add a new room to get started.</p>
+                        </div>
+                    </div>
+                </Alert>
             ) : (
-                <Row xs={1} md={3} className="g-4">
+                <Row xs={1} md={2} lg={3} xl={4} className="g-4">
                     {building.rooms.map((room) => (
                         <Col key={room._id}>
-                            <Card>
-                                <Card.Body>
-                                    <Card.Title>Room {room.number}</Card.Title>
-                                    <Card.Text>Capacity: {room.capacity} people</Card.Text>
-                                    <div className="d-flex justify-content-between">
+                            <Card 
+                                className="h-100 shadow"
+                                style={{
+                                    ...cardStyle,
+                                    ...(hoveredCard === room._id ? cardHoverStyle : {})
+                                }}
+                                onMouseEnter={() => setHoveredCard(room._id)}
+                                onMouseLeave={() => setHoveredCard(null)}
+                            >
+                                <Card.Body className="d-flex flex-column text-white">
+                                    <div className="d-flex justify-content-between align-items-center mb-3">
+                                        <Badge bg="primary" pill className="px-3 py-2 fs-6">Room {room.number}</Badge>
+                                        <Badge bg="secondary" pill className="d-flex align-items-center px-3 py-2">
+                                            <BsPeople className="me-1" /> {room.capacity}
+                                        </Badge>
+                                    </div>
+                                    
+                                    <Card.Title className="fs-4 mb-3">Room {room.number}</Card.Title>
+                                    
+                                    <Card.Text className="text-light opacity-75 mb-4">
+                                        This room can accommodate up to {room.capacity} {room.capacity === 1 ? 'person' : 'people'}.
+                                    </Card.Text>
+                                    
+                                    <div className="mt-auto d-flex gap-2">
                                         <Button
-                                            variant="warning"
-                                            size="sm"
+                                            variant="outline-warning"
+                                            className="flex-grow-1"
                                             onClick={() => {
                                                 setSelectedRoom(room);
                                                 setShowRoomModal(true);
@@ -128,8 +233,8 @@ const BuildingRooms = () => {
                                             Edit
                                         </Button>
                                         <Button
-                                            variant="danger"
-                                            size="sm"
+                                            variant="outline-danger"
+                                            className="flex-grow-1"
                                             onClick={() => handleDeleteRoom(room._id)}
                                         >
                                             Delete
