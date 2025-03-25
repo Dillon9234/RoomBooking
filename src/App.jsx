@@ -5,7 +5,7 @@ import Rooms from "./pages/admin/rooms";
 import Building from "./pages/building";
 import Login from "./pages/login";
 import Room from "./pages/room";
-import Layout from "./components/layout"; // Import Layout
+import Layout from "./components/Layout"; // Import Layout
 import Dashboard from "./pages/admin/dashboard";
 import Bookings from "./pages/admin/bookings";
 import BuildingRooms from "./pages/buildingrooms";
