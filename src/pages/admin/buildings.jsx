@@ -1,9 +1,25 @@
 import React, { useEffect, useState } from "react";
-import { Container, Row, Col, Table, Button, Spinner, Alert } from "react-bootstrap";
+import { Container, Row, Col, Table, Button, Spinner, Alert, Card } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import CreateBuildingForm from "../../components/CreateBuildingForm";
 import ToastMessage from "../../components/ToastMessage";
 import { getBuildings, deleteBuilding } from "../../services/api";
+import { BsBuilding } from 'react-icons/bs'; // Import building icon
+
+
+const cardStyle = {
+  transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+  backgroundColor: '#2a2a2a',
+  border: 'none',
+  borderRadius: '8px',
+  overflow: 'hidden'
+};
+
+const cardHoverStyle = {
+  transform: 'scale(1.05)',
+  boxShadow: '0 10px 20px rgba(0, 0, 0, 0.2)',
+  cursor: 'pointer'
+};
 
 const Buildings = () => {
   const [buildings, setBuildings] = useState([]);
@@ -12,6 +28,8 @@ const Buildings = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [selectedBuilding, setSelectedBuilding] = useState(null);
   const [toast, setToast] = useState(null);
+  const [hoveredCard, setHoveredCard] = useState(null);
+
 
   useEffect(() => {
     fetchBuildings();
@@ -130,41 +148,39 @@ const Buildings = () => {
         </Alert>
       )}
 
-      {buildings.length > 0 && !loading && (
-        <Table responsive hover bordered variant="dark">
-          <thead>
-            <tr>
-              <th>Building Name</th>
-              <th>Number of Rooms</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {buildings.map((building) => (
-              <tr key={building._id}>
-                <td>{building.name}</td>
-                <td>{building.rooms?.length || 0}</td>
-                <td>
-                  <Button 
-                    variant="outline-info" 
-                    size="sm" 
-                    className="me-2" 
-                    onClick={() => handleEditBuilding(building)}
-                  >
-                    Edit
-                  </Button>
-                  <Button 
-                    variant="outline-danger" 
-                    size="sm" 
-                    onClick={() => handleDeleteBuilding(building)}
-                  >
-                    Delete
-                  </Button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </Table>
+{buildings.length === 0 ? (
+        <Alert variant="info">No buildings available at the moment.</Alert>
+      ) : (
+        <Row xs={1} md={3} lg={4} className="g-4">
+          {buildings.map((building) => (
+            <Col key={building._id}>
+              <Link 
+                to={`/admin/building/${building._id}/rooms`} 
+                className="text-decoration-none"
+              >
+                <Card 
+                  className="h-100" 
+                  style={{
+                    ...cardStyle,
+                    ...(hoveredCard === building._id ? cardHoverStyle : {})
+                  }}
+                  onMouseEnter={() => setHoveredCard(building._id)}
+                  onMouseLeave={() => setHoveredCard(null)}
+                >
+                  <Card.Body className="d-flex flex-column justify-content-center align-items-center p-4 text-white">
+                    <div className="mb-3 text-primary" style={{ fontSize: '2.5rem' }}>
+                      <BsBuilding />
+                    </div>
+                    <Card.Title className="text-center mb-3 fw-bold">{building.name}</Card.Title>
+                    <div className="bg-primary text-white px-3 py-2 rounded-pill">
+                      {building.rooms?.length || 0} Room{building.rooms?.length !== 1 ? 's' : ''}
+                    </div>
+                  </Card.Body>
+                </Card>
+              </Link>
+            </Col>
+          ))}
+        </Row>
       )}
     </Container>
   );

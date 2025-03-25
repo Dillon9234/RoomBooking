@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Container, Row, Col, Card, Button, Spinner, Alert, Badge } from "react-bootstrap";
-import CreateRoomForm from "../components/CreateRoomForm";
+import CreateRoomForm from "../../components/CreateRoomForm";
 import { Link } from 'react-router-dom';
 import { BsDoorOpen, BsPeople, BsArrowLeft, BsPlusCircle } from 'react-icons/bs';
 
@@ -21,7 +21,7 @@ const cardHoverStyle = {
   boxShadow: '0 15px 30px rgba(0, 0, 0, 0.3)'
 };
 
-const BuildingRooms = () => {
+const AdminBuildingRooms = () => {
     const { buildingId } = useParams();
     const [building, setBuilding] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -221,7 +221,7 @@ const BuildingRooms = () => {
                                         This room can accommodate up to {room.capacity} {room.capacity === 1 ? 'person' : 'people'}.
                                     </Card.Text>
                                     
-                                    {/* <div className="mt-auto d-flex gap-2">
+                                    <div className="mt-auto d-flex gap-2">
                                         <Button
                                             variant="outline-warning"
                                             className="flex-grow-1"
@@ -239,7 +239,7 @@ const BuildingRooms = () => {
                                         >
                                             Delete
                                         </Button>
-                                    </div> */}
+                                    </div>
                                 </Card.Body>
                             </Card>
                         </Col>
@@ -261,4 +261,4 @@ const BuildingRooms = () => {
     );
 };
 
-export default BuildingRooms;
+export default AdminBuildingRooms;
