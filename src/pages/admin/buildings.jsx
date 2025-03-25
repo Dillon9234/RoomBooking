@@ -1,77 +1,164 @@
-import React, { useEffect, useState } from 'react';
-import { Container, Row, Col, Table, Button, Modal, Spinner, Alert } from 'react-bootstrap';
-import { getBuildings, getBuildingRooms, createBuilding } from '../../services/api';
+import React, { useEffect, useState } from "react";
+import { Container, Row, Col, Table, Button, Spinner, Alert } from "react-bootstrap";
+import { Link } from "react-router-dom";
+import CreateBuildingForm from "../../components/CreateBuildingForm";
+import ToastMessage from "../../components/ToastMessage";
+import { getBuildings, deleteBuilding } from "../../services/api";
 
 const Buildings = () => {
   const [buildings, setBuildings] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [rooms, setRooms] = useState([]);
+  const [error, setError] = useState(null);
+  const [isFormOpen, setIsFormOpen] = useState(false);
   const [selectedBuilding, setSelectedBuilding] = useState(null);
-  const [showModal, setShowModal] = useState(false);
+  const [toast, setToast] = useState(null);
 
   useEffect(() => {
     fetchBuildings();
+    
+    // Force dark theme
+    document.documentElement.setAttribute("data-bs-theme", "dark");
   }, []);
 
   const fetchBuildings = async () => {
-    setLoading(true);
     try {
+      setLoading(true);
       const data = await getBuildings();
       setBuildings(data);
-    } catch (error) {
-      console.error(error);
+    } catch (err) {
+      setError(err.message);
+      showToast(err.message, "danger");
     } finally {
       setLoading(false);
     }
   };
 
-  const fetchRooms = async (building) => {
+  const showToast = (message, type) => {
+    setToast({ text: message, type });
+  };
+
+  const handleEditBuilding = (building) => {
     setSelectedBuilding(building);
-    setShowModal(true);
+    setIsFormOpen(true);
+  };
+
+  const handleDeleteBuilding = async (building) => {
+    if (!window.confirm(`Are you sure you want to delete "${building.name}"?`)) {
+      return;
+    }
+
     try {
-      const data = await getBuildingRooms(building._id);
-      setRooms(data);
+      await deleteBuilding(building._id);
+      setBuildings(buildings.filter((b) => b._id !== building._id));
+      showToast(`Building "${building.name}" deleted successfully`, "success");
     } catch (error) {
       console.error(error);
+      showToast(error.message || "Failed to delete building", "danger");
     }
   };
 
-  const handleCreateBuilding = async () => {
-    const name = prompt('Enter building name:');
-    if (!name) return;
-
-    try {
-      const newBuilding = await createBuilding(name);
-      setBuildings([...buildings, newBuilding]);
-    } catch (error) {
-      console.error(error);
-    }
+  const closeForm = () => {
+    setIsFormOpen(false);
+    setSelectedBuilding(null);
   };
 
   return (
-    <Container className="py-4">
-      <h1>Building Management</h1>
-      <Button onClick={handleCreateBuilding} className="mb-3">Create Building</Button>
+    <Container className="py-4 text-light">
+      <h1 className="mb-4">Building Management</h1>
+      
+      <Row className="mb-4">
+        <Col className="d-flex justify-content-between align-items-center">
+          <Link to="/admin" className="btn btn-outline-light">
+            &larr; Back to Admin
+          </Link>
+          <Button
+            variant="primary"
+            onClick={() => {
+              setSelectedBuilding(null);
+              setIsFormOpen(true);
+            }}
+          >
+            Create Building
+          </Button>
+        </Col>
+      </Row>
 
-      {loading ? (
-        <Spinner animation="border" />
-      ) : buildings.length === 0 ? (
-        <Alert variant="info">No buildings available</Alert>
-      ) : (
-        <Table bordered hover>
+      {toast && (
+        <ToastMessage
+          message={toast.text}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
+
+      <CreateBuildingForm
+        isOpen={isFormOpen}
+        onClose={closeForm}
+        onBuildingAdded={(newBuilding) => {
+          setBuildings((prev) => [...prev, newBuilding]);
+          showToast(`Building "${newBuilding.name}" created successfully`, "success");
+        }}
+        onEditBuilding={(updatedBuilding) => {
+          setBuildings((prevBuildings) =>
+            prevBuildings.map((b) => (b._id === updatedBuilding._id ? updatedBuilding : b))
+          );
+          showToast(`Building "${updatedBuilding.name}" updated successfully`, "success");
+        }}
+        onError={(errorMessage) => {
+          showToast(errorMessage, "danger");
+        }}
+        building={selectedBuilding}
+      />
+
+      {loading && (
+        <div className="d-flex justify-content-center my-5">
+          <Spinner animation="border" variant="light" role="status">
+            <span className="visually-hidden">Loading buildings...</span>
+          </Spinner>
+        </div>
+      )}
+
+      {error && !loading && (
+        <Alert variant="danger">
+          {error}
+        </Alert>
+      )}
+
+      {!loading && !error && buildings.length === 0 && (
+        <Alert variant="info">
+          No buildings available. Create a new building to get started.
+        </Alert>
+      )}
+
+      {buildings.length > 0 && !loading && (
+        <Table responsive hover bordered variant="dark">
           <thead>
             <tr>
               <th>Building Name</th>
-              <th>Rooms</th>
+              <th>Number of Rooms</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
             {buildings.map((building) => (
               <tr key={building._id}>
                 <td>{building.name}</td>
+                <td>{building.rooms?.length || 0}</td>
                 <td>
-                  <Button variant="link" onClick={() => fetchRooms(building)}>
-                    View Rooms
+                  <Button 
+                    variant="outline-info" 
+                    size="sm" 
+                    className="me-2" 
+                    onClick={() => handleEditBuilding(building)}
+                  >
+                    Edit
+                  </Button>
+                  <Button 
+                    variant="outline-danger" 
+                    size="sm" 
+                    onClick={() => handleDeleteBuilding(building)}
+                  >
+                    Delete
                   </Button>
                 </td>
               </tr>
@@ -79,24 +166,6 @@ const Buildings = () => {
           </tbody>
         </Table>
       )}
-
-      {/* Modal to show rooms */}
-      <Modal show={showModal} onHide={() => setShowModal(false)} centered>
-        <Modal.Header closeButton>
-          <Modal.Title>Rooms in {selectedBuilding?.name}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          {rooms.length > 0 ? (
-            <ul>
-              {rooms.map((room) => (
-                <li key={room._id}>{room.number} (Capacity: {room.capacity})</li>
-              ))}
-            </ul>
-          ) : (
-            <Alert variant="info">No rooms found.</Alert>
-          )}
-        </Modal.Body>
-      </Modal>
     </Container>
   );
 };

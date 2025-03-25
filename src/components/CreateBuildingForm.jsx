@@ -1,4 +1,3 @@
-// frontend/src/components/CreateBuildingForm.jsx
 import React, { useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import { createBuilding, updateBuilding } from '../services/api';
@@ -36,15 +35,15 @@ const CreateBuildingForm = ({ isOpen, onClose, onBuildingAdded, onEditBuilding, 
     if (!isOpen) return null;
 
     return (
-        <Modal show={isOpen} onHide={onClose} centered>
+        <Modal show={isOpen} onHide={onClose} centered data-bs-theme="dark">
             <Modal.Header closeButton>
-                <Modal.Title>{building ? "Edit Building" : "Create New Building"}</Modal.Title>
+                <Modal.Title className='text-white'>{building ? "Edit Building" : "Create New Building"}</Modal.Title>
             </Modal.Header>
             
             <Modal.Body>
                 <Form onSubmit={handleSubmit}>
                     <Form.Group className="mb-3">
-                        <Form.Label>Building Name</Form.Label>
+                        <Form.Label className='text-white'>Building Name</Form.Label>
                         <Form.Control
                             type="text"
                             placeholder="Enter building name"

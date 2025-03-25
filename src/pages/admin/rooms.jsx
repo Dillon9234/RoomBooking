@@ -1,8 +1,10 @@
 "use client"
 import { useEffect, useState } from "react";
+import { Button } from "react-bootstrap";
 import ToastMessage from "../../components/ToastMessage";
 import CreateRoomForm from "../../components/CreateRoomForm";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { Link } from "react-router-dom";
 
 const Rooms = () => {
     const [rooms, setRooms] = useState([]);
@@ -14,6 +16,9 @@ const Rooms = () => {
     const [toast, setToast] = useState(null);
     
     useEffect(() => {
+        // Force dark theme
+        document.documentElement.setAttribute("data-bs-theme", "dark");
+        
         const fetchRooms = async () => {
             try {
                 const response = await fetch("http://localhost:3000/api/rooms");
@@ -59,17 +64,22 @@ const Rooms = () => {
     };
 
     return (
-        <div className="container mt-4">
-            <div className="d-flex justify-content-end mb-3">
-                <button className="btn btn-primary" onClick={() => {
+        <div className="container mt-4 text-light">
+            <div className="d-flex justify-content-between align-items-center mb-3">
+                <Link to="/admin" className="btn btn-outline-light">
+                    &larr; Back to Admin
+                </Link>
+                <Button 
+                    variant="primary" 
+                    onClick={() => {
                     setSelectedRoom(null);
                     setIsEditing(false);
                     setIsFormOpen(true);
-                }}>
+                    }}
+                >
                     Create Room
-                </button>
+                </Button>
             </div>
-
             {isFormOpen && (
                 <CreateRoomForm
                     isOpen={isFormOpen}
@@ -92,8 +102,8 @@ const Rooms = () => {
             {!loading && !error && rooms.length === 0 && <p>No rooms available</p>}
 
             {rooms.length > 0 && (
-                <table className="table table-bordered">
-                    <thead className="thead-dark">
+                <table className="table table-bordered table-dark">
+                    <thead>
                         <tr>
                             <th>Room Number</th>
                             <th>Capacity</th>
@@ -108,10 +118,21 @@ const Rooms = () => {
                                 <td>{room.capacity}</td>
                                 <td>{room.building.name}</td>
                                 <td>
-                                    <div className="btn-group">
-                                        <button className="btn btn-sm btn-warning" onClick={() => handleEditRoom(room)}>Edit</button>
-                                        <button className="btn btn-sm btn-danger" onClick={() => handleDeleteRoom(room)}>Delete</button>
-                                    </div>
+                                    <Button 
+                                        variant="outline-info" 
+                                        size="sm" 
+                                        className="me-2" 
+                                        onClick={() => handleEditRoom(room)}
+                                    >
+                                        Edit
+                                    </Button>
+                                    <Button 
+                                        variant="outline-danger" 
+                                        size="sm" 
+                                        onClick={() => handleDeleteRoom(room)}
+                                    >
+                                        Delete
+                                    </Button>
                                 </td>
                             </tr>
                         ))}
