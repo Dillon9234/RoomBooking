@@ -5,6 +5,8 @@ import ConfirmBox from "./ConfirmBox";
 import DatePickerModal from "./DatePickeModal";
 import ToastMessage from "./ToastMessage";
 import RoomTable from "./BookingTable";
+import Swal from 'sweetalert2';
+
 
 const BookingForm = () => {
   const [submitting, setSubmitting] = useState(false);
@@ -107,8 +109,26 @@ const BookingForm = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    if (submitting) return;
-    setSubmitting(true);
+    
+    const result = await Swal.fire({
+      title: 'Submit Application?',
+      html: 'You are about to submit your application for <b>Frontend Developer</b>. Please review your information before confirming.',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Submit Application',
+      cancelButtonText: 'Review Changes',
+      reverseButtons: true,
+      customClass: {
+        confirmButton: 'btn btn-success',
+        cancelButton: 'btn btn-outline-secondary'
+      }
+    });
+  
+    if (result.isConfirmed) {
+      // Process form submission
+      await submitForm();
+      Swal.fire('Success!', 'Your application has been submitted.', 'success');
+    }
   };
 
   const confirmSubmission = async () => {
