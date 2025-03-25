@@ -9,7 +9,7 @@ const NavigationBar = () => {
       <Container>
         {/* Brand Logo */}
         <Navbar.Brand as={NavLink} to="/">
-          Room Booking
+          Room Allotment
         </Navbar.Brand>
 
         {/* Toggle Button for Mobile */}
@@ -32,7 +32,7 @@ const NavigationBar = () => {
                   Rooms
                 </Nav.Link>
                 <Nav.Link as={NavLink} to="/admin/bookings" className="text-white">
-                  Booking
+                  Allotment
                 </Nav.Link>
                 {/* <Nav.Item>
                   <LogoutForm />

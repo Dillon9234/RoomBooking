@@ -8,9 +8,9 @@ const Home = () => {
     <Container className="py-5">
       <Row className="justify-content-center">
         <Col lg={8} className="text-center">
-          <h1 className="display-4 mb-4">Room Booking Application</h1>
+          <h1 className="display-4 mb-4">Room Allotment Application</h1>
           <p className="lead mb-5">
-            Book rooms in various buildings for your meetings, events, and more.
+            Allot rooms in various buildings for your meetings, events, and more.
           </p>
           
           <div className="d-flex gap-3 justify-content-center">

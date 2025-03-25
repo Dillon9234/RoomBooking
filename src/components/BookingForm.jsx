@@ -110,11 +110,11 @@ const BookingForm = () => {
     event.preventDefault();
     
     const result = await Swal.fire({
-      title: 'Confirm Booking',
-      html: 'Are you sure you want to submit this booking request?',
+      title: 'Confirm Allotment',
+      html: 'Are you sure you want to submit this allotment request?',
       icon: 'question',
       showCancelButton: true,
-      confirmButtonText: 'Confirm Booking',
+      confirmButtonText: 'Confirm Allotment',
       cancelButtonText: 'Review Details',
       reverseButtons: true,
       background: '#2a2a2a',
@@ -132,7 +132,7 @@ const BookingForm = () => {
       await confirmSubmission();
       Swal.fire({
         title: 'Success!',
-        text: 'Your booking has been confirmed.',
+        text: 'Your allotment has been confirmed.',
         icon: 'success',
         background: '#2a2a2a',
         color: '#fff',
@@ -180,7 +180,7 @@ const BookingForm = () => {
         throw new Error(errorText || "Failed to process request.");
       }
       setToast({
-        text: state === 1 ? "Booked successfully!" : "Deleted successfully!",
+        text: state === 1 ? "Alloted successfully!" : "Deleted successfully!",
         type: "success",
       });
     } catch (error) {
@@ -235,7 +235,7 @@ const BookingForm = () => {
               disabled={!state}
             />
             <label htmlFor="inline-radio" className="form-check-label cursor-pointer">
-              Book
+            Allot
             </label>
           </div>
           <div
