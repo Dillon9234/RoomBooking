@@ -17,7 +17,7 @@ const BookingForm = () => {
     {
       _id: mongoose.Types.ObjectId;
       name: string;
-      rooms: mongoose.Types.ObjectId[];
+      rooms: number;
     }[]
   >([]);
   const [selectedBuilding, setSelectedBuilding] = useState("");
@@ -257,7 +257,7 @@ const BookingForm = () => {
                 (building: {
                   _id: mongoose.Types.ObjectId;
                   name: string;
-                  rooms: mongoose.Types.ObjectId[];
+                  rooms: number;
                 }) => (
                   <option
                     key={building._id.toString()}
@@ -269,7 +269,7 @@ const BookingForm = () => {
               )}
           </select>
         </div>
-        <div className="flex flex-col justify-center items-center w-52">
+        <div className="relative flex flex-col justify-center items-center w-52">
           <button
             type="button"
             onClick={() => {
@@ -280,6 +280,15 @@ const BookingForm = () => {
           >
             Date Range
           </button>
+          <DatePickerModal
+            showDatePicker={showDatePicker}
+            setShowDatePicker={setShowDatePicker}
+            startDate={dateRange[0]}
+            endDate={dateRange[1]}
+            setDateRange={setDateRange}
+            fetchRoomsState={fetchRoomsState}
+            setOkPressed={setOkPressed}
+          />
         </div>
         {state === 1 && (
           <div className="py-2 w-52">
@@ -313,16 +322,6 @@ const BookingForm = () => {
           </div>
         </div>
       </div>
-
-      <DatePickerModal
-        showDatePicker={showDatePicker}
-        setShowDatePicker={setShowDatePicker}
-        startDate={dateRange[0]}
-        endDate={dateRange[1]}
-        setDateRange={setDateRange}
-        fetchRoomsState={fetchRoomsState}
-        setOkPressed={setOkPressed}
-      />
 
       <div>
         <ConfirmBox

@@ -2,18 +2,10 @@
 
 import React, { useState, FormEvent } from 'react'
 
-interface Room {
-    _id: string;
-    number: number;
-    capacity: number;
-    building: string;
-    __v: number;
-}
-
 interface Building {
     _id: string;
     name: string;
-    rooms: Room[];
+    rooms: number;
     __v: number;
 }
 

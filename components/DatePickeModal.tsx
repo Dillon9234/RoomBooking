@@ -76,7 +76,7 @@ const DatePickerModal = ({
 
             {/* Desktop View Date Picker */}
             <div
-                className={`absolute left-64 top-[22.3rem] z-50 mt-2 bg-white shadow-2xl rounded p-2 shadow-[#575757]
+                className={`absolute top-[3em] z-50 mt-2 bg-white shadow-2xl rounded p-2 shadow-[#575757]
                 border border-gray-200 transition-transform duration-200 ease-out scale-100 hidden md:block
                 ${showDatePicker ? "scale-100 opacity-100" : "scale-95 opacity-0 pointer-events-none"}`}
             >

@@ -17,13 +17,18 @@ interface Room {
     };
 }
 
+interface RoomDeconstructed extends Omit<Room, "building"> {
+    buildingId: string;
+    buildingName: string;
+}
+
 interface CreateRoomFormProps {
     isOpen: boolean;
     onClose: () => void;
     onRoomAdded: (room: Room) => void;
     onEditRoom: (room: Room) => void;
     onError?: (message: string) => void;
-    room?: Room;
+    room: RoomDeconstructed | null;
 }
 
 const CreateRoomForm: React.FC<CreateRoomFormProps> = ({ isOpen, onClose, onRoomAdded, onEditRoom, onError, room }) => {
@@ -39,7 +44,7 @@ const CreateRoomForm: React.FC<CreateRoomFormProps> = ({ isOpen, onClose, onRoom
             const formData = new FormData(event.currentTarget);
             const number = formData.get("number") as string;
             const capacity = formData.get("capacity") as string;
-            const buildingId = room ? room.building._id : formData.get("building") as string;
+            const buildingId = room ? room.buildingId : formData.get("building") as string;
             
             if(!room){
                 const response = await fetch(`/api/building/${buildingId}/room/new`, {
@@ -90,8 +95,8 @@ const CreateRoomForm: React.FC<CreateRoomFormProps> = ({ isOpen, onClose, onRoom
             const data: Building[] = await response.json();
             setBuildings(data);
             
-            if (room?.building && data.length > 0) {
-              setSelectedBuilding(room.building._id);
+            if (room && data.length > 0) {
+              setSelectedBuilding(room.buildingId);
             } else if (data.length > 0) {
               setSelectedBuilding(data[0]._id);
             }
@@ -104,8 +109,8 @@ const CreateRoomForm: React.FC<CreateRoomFormProps> = ({ isOpen, onClose, onRoom
 
     if (!isOpen) return null;
     
-    const buildingName = room?.building ? 
-      buildings.find(b => b._id === room.building._id)?.name || 'Loading...' : '';
+    const buildingName = room ? 
+      buildings.find(b => b._id === room.buildingId)?.name || 'Loading...' : '';
 
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 transition-transform duration-200 ease-out scale-100">
@@ -126,7 +131,7 @@ const CreateRoomForm: React.FC<CreateRoomFormProps> = ({ isOpen, onClose, onRoom
                         {room ? (
                             <div className='p-2 rounded-lg bg-gray-900 text-gray-400 border border-gray-700'>
                                 {buildingName}
-                                <input type="hidden" name="building" value={room.building._id} />
+                                <input type="hidden" name="building" value={room.buildingId} />
                             </div>
                         ) : (
                             <select 
