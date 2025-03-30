@@ -135,7 +135,7 @@ function GenericTable<T extends DataItem>({
             <table className="w-full border-separate border border-[#575757] rounded-lg border-spacing-0">
                 <thead>
                     <tr>
-                        <th className="px-4 py-2 border-b border-[#575757] text-left">
+                        <th className="px-4 py-2 w-[10em] border-b border-[#575757] text-left">
                             <input type='checkbox' onChange={handleAllCheckboxChange}></input>
                         </th>
                         {fieldNames.map((fieldName, index) => (
@@ -152,7 +152,7 @@ function GenericTable<T extends DataItem>({
                 <tbody>
                     {currentitems.map((item, rowIndex) => (
                         <tr key={item._id}>
-                            <td className={`px-4 py-2 border-[#575757] ${rowIndex !== data.length - 1 ? 'border-b' : ''}`}>
+                            <td className={`px-4 py-2 border-[#575757] ${rowIndex !== currentitems.length - 1 ? 'border-b' : ''}`}>
                                 <input 
                                     type='checkbox' 
                                     value={item._id} 
@@ -163,12 +163,12 @@ function GenericTable<T extends DataItem>({
                             {fieldNames.map((fieldName, colIndex) => (
                                 <td 
                                     key={colIndex} 
-                                    className={`px-4 py-2 border-[#575757] ${rowIndex !== data.length - 1 ? 'border-b' : ''}`}
+                                    className={`px-4 py-2 border-[#575757] ${rowIndex !== currentitems.length - 1 ? 'border-b' : ''}`}
                                 >
                                     {item[fieldName] as string}
                                 </td>
                             ))}
-                            <td className={`px-4 py-2 border-[#575757] ${rowIndex !== data.length - 1 ? 'border-b' : ''}`}>
+                            <td className={`px-4 py-2 w-[10em] border-[#575757] ${rowIndex !== currentitems.length - 1 ? 'border-b' : ''}`}>
                                 <div className="relative inline-block">
                                     <button
                                         data-dropdown-trigger
