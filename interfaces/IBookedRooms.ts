@@ -1,8 +1,6 @@
-import { Types } from "mongoose";
-
 interface IBookedRooms {
     date: string;
-    roomId: Types.ObjectId;
+    roomId: string;
     by: string;
 }
 

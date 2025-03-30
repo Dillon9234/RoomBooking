@@ -1,10 +1,11 @@
 import { connectToDB } from "@/utils/database"
 import Building from "@/models/building"
-import Room from "@/models/room"
 
-export const GET = async (request:Request,context:{params:{id:String}}) => {
+
+
+export const GET = async (req:Request, { params }: { params: Promise<{ id: string }> }) => {
     try{
-        const { id } = await context.params
+        const { id } = await params
 
         await connectToDB()
 
@@ -13,7 +14,7 @@ export const GET = async (request:Request,context:{params:{id:String}}) => {
         return new Response(JSON.stringify(building), {status: 200})
 
     }catch(error){
-        console.log(error)
+        console.error("Failed to fetch building "+ error)
         return new Response("Failed to fetch building", 
             {status: 500})
     }

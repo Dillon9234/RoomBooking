@@ -79,7 +79,7 @@ const CreateRoomForm: React.FC<CreateRoomFormProps> = ({ isOpen, onClose, onRoom
             }
             
         } catch (error) {
-            console.log(error);
+            console.error("An error occurred "+ error);
             if (onError) {
                 onError((error as Error).message || "An error occurred");
             }
@@ -101,7 +101,7 @@ const CreateRoomForm: React.FC<CreateRoomFormProps> = ({ isOpen, onClose, onRoom
               setSelectedBuilding(data[0]._id);
             }
           } catch (error) {
-            console.log(error);
+            console.error("Error fetching buildings " + error);
           }
         };
         fetchBuildings();

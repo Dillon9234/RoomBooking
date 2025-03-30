@@ -7,6 +7,7 @@ interface Building {
     name: string;
     rooms: number;
     __v: number;
+    [key: string]: unknown;
 }
 
 interface CreateBuildingFormProps {
@@ -62,7 +63,7 @@ const CreateBuildingForm: React.FC<CreateBuildingFormProps> = ({ isOpen, onClose
             }
             
         } catch (error) {
-            console.log(error);
+            console.error("An error occurred "+error);
             if (onError) {
                 onError((error as Error).message || "An error occurred");
             }

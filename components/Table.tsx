@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 
 interface DataItem {
     _id: string;
-    [key: string]: any;
+    [key: string]: unknown;
 }
 
 interface GenericTableProps<T extends DataItem> {
@@ -41,7 +41,7 @@ function GenericTable<T extends DataItem>({
     useEffect(() => {
         setCurrentitems(data.slice((currentPage - 1) * maxItems, currentPage * maxItems));
         setSelectedDeletingItems([]);
-    }, [currentPage,data])  
+    }, [currentPage,data,maxItems])  
 
     const getFieldNames = () => {
         if (data.length === 0) return [];
@@ -57,7 +57,7 @@ function GenericTable<T extends DataItem>({
         );
     };
 
-    const handleAllCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleAllCheckboxChange = () => {
         if(currentitems.length == selectedDeletingItems.length)
             setSelectedDeletingItems([])
         else
@@ -93,7 +93,7 @@ function GenericTable<T extends DataItem>({
                 document.removeEventListener("mousedown", handleClickOutside);
             };
         }
-    }, [selectedItem, isEditing]); 
+    }, [selectedItem, isEditing, setSelectedItem]); 
 
     const handleEditItem = (item: T): void => {
         setSelectedItem(item);
@@ -165,7 +165,7 @@ function GenericTable<T extends DataItem>({
                                     key={colIndex} 
                                     className={`px-4 py-2 border-[#575757] ${rowIndex !== data.length - 1 ? 'border-b' : ''}`}
                                 >
-                                    {item[fieldName]}
+                                    {item[fieldName] as string}
                                 </td>
                             ))}
                             <td className={`px-4 py-2 border-[#575757] ${rowIndex !== data.length - 1 ? 'border-b' : ''}`}>

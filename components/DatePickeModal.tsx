@@ -93,7 +93,7 @@ const DatePickerModal = ({
                     selected={startDate}
                     onChange={(dates: [Date | null, Date | null]) => {
                         setDateRange(dates);
-                        let [start, end] = dates;
+                        const [start, end] = dates;
                         if (start && end) {
                             setShowDatePicker(false);
                             fetchRoomsState();

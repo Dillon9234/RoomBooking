@@ -8,7 +8,7 @@ export const POST = async (req:Request) => {
     try{
         await connectToDB()
 
-        let conflicts:{date:string, roomId:mongoose.Types.ObjectId, bookedBy:string}[]= []
+        const conflicts:{date:string, roomId:mongoose.Types.ObjectId, bookedBy:string}[]= []
 
         if(bookings.length == 0)
             return new Response(JSON.stringify("No rooms inputted"),{status:400})
@@ -22,7 +22,7 @@ export const POST = async (req:Request) => {
 
         return new Response(JSON.stringify(conflicts), {status: 201})
     }catch(error){
-        console.log(error)
+        console.error("Failed to book room(s) "+error)
         return new Response("Failed to book room(s)", { status:500})
     }
 }

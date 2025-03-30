@@ -2,7 +2,14 @@ import { connectToDB } from "@/utils/database"
 import Building from "@/models/building"
 import Room from "@/models/room"
 
-export const POST = async (req:Request, context:{ params: { id: string } }) => {
+interface Context {
+    params: Promise<{
+      roomid: string;
+      id?: string;
+    }>;
+  }  
+
+export const POST = async (req:Request, context:Context) => {
     const { number, capacity } = await req.json()
     const { id } = await context.params
 
@@ -37,6 +44,7 @@ export const POST = async (req:Request, context:{ params: { id: string } }) => {
 
         return new Response(JSON.stringify(populatedRoom), {status: 201})
     }catch(error){
+        console.error("Failed to create a new room" + error)
         return new Response("Failed to create a new room", { status:500})
     }
 }

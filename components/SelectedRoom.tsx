@@ -1,6 +1,5 @@
 'use client'
 
-import mongoose from 'mongoose'
 import React, { useEffect, useState } from 'react'
 
 interface selectedRoomsProps{
@@ -8,29 +7,27 @@ interface selectedRoomsProps{
     status:string,
     by:string
   },
-  room:mongoose.Types.ObjectId,
   setSelected: (isSelected:boolean) => void,
   globalState:number
 }
 
-const SelectedRoom = ({status, room, setSelected, globalState}:selectedRoomsProps) => {
+const SelectedRoom = ({status, setSelected, globalState}:selectedRoomsProps) => {
 
   const [curStatus, setCurStatus] = useState('')
 
   const [backgroundColorClass, setBackgroundColorClass] = useState('')
-
-  const statusColorMap: { [key: string]: string } = {
-    Selected: "bg-[#38FF7E]",
-    Occupied: "bg-[#353535]",
-    Unselected: "bg-[#8b8b8b]",
-    DeleteSelected: "bg-[#38FF7E]"
-  };
 
   useEffect(() => {
     setCurStatus(status.status)
   },[status])
 
   useEffect(() => {
+    const statusColorMap: { [key: string]: string } = {
+      Selected: "bg-[#38FF7E]",
+      Occupied: "bg-[#353535]",
+      Unselected: "bg-[#8b8b8b]",
+      DeleteSelected: "bg-[#38FF7E]"
+    };
     setBackgroundColorClass(statusColorMap[curStatus])
   },[curStatus])
 

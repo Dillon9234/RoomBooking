@@ -1,6 +1,6 @@
 "use client"
 
-import { SetStateAction, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import ToastMessage from "@/components/ToastMessage";
 import CreateRoomForm from "@/components/CreateRoomForm";
 import GenericTable from "@/components/Table";
@@ -18,6 +18,7 @@ interface Room {
 interface RoomDeconstructed extends Omit<Room, "building"> {
     buildingId: string;
     buildingName: string;
+    [key: string]: unknown;
 }
 
 interface Toast {
@@ -123,7 +124,7 @@ const Rooms = () => {
         throw new Error(errorData.message || "Failed to delete building");
       }
     } catch (error) {
-      console.log(error);
+      console.error("Failed to delete building"+ error);
       const errorMessage = error instanceof Error ? error.message : "Failed to delete building";
       showToast(errorMessage, "error");
     }
@@ -153,7 +154,7 @@ const Rooms = () => {
         setRooms(updatedRooms);
         showToast(`Selected room(s) deleted successfully`, "success");
     } catch (err) {
-        console.log(err);
+        console.error("Failed to delete room(s) " + err);
         const errorMessage = err instanceof Error ? err.message : "Failed to delete room(s)";
         showToast(errorMessage, "error");
     }

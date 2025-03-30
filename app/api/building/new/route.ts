@@ -2,7 +2,7 @@ import { connectToDB } from "@/utils/database"
 import Building from "@/models/building"
 
 export const POST = async (req:Request) => {
-    const { name }:{name:String} = await req.json()
+    const { name }:{name:string} = await req.json()
 
     try{
         await connectToDB()
@@ -16,7 +16,7 @@ export const POST = async (req:Request) => {
 
         return new Response(JSON.stringify(newBuilding), {status: 201})
     }catch(error){
-        console.log(error)
+        console.error("Failed to create a new building "+ error)
         return new Response("Failed to create a new building", { status:500})
     }
 }

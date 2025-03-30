@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
 import "react-datepicker/dist/react-datepicker.css";
 import ConfirmBox from "./ConfirmBox";
 import mongoose from "mongoose";
@@ -34,15 +33,13 @@ const BookingForm = () => {
 
   const [roomsState, setRoomsState] = useState<IBookedRooms[]>([]);
 
-  const router = useRouter();
-
   const [okPressed, setOkPressed] = useState(false);
 
   const [state, setState] = useState(Number);
   const nameInput = useRef<HTMLInputElement>(null);
 
   const selectedRoomsRef = useRef<
-    { date: string; roomId: mongoose.Types.ObjectId }[]
+    { date: string; roomId: string }[]
   >([]);
 
   const [toast, setToast] = useState<{
@@ -57,7 +54,7 @@ const BookingForm = () => {
         const data = await response.json();
         setBuildings(data);
       } catch (error) {
-        console.log(error);
+        console.error("Error fetching buildings "+error);
       }
     };
     setState(1);
@@ -74,7 +71,7 @@ const BookingForm = () => {
         const data = await response.json();
         setRooms(data.rooms);
       } catch (error) {
-        console.log(error);
+        console.error("Error fetching rooms "+error);
       }
     };
 
@@ -88,7 +85,7 @@ const BookingForm = () => {
       const data = await response.json();
       setRoomsState(data);
     } catch (error) {
-      console.log(error);
+      console.error("Error fetching booked rooms "+error);
     }
   };
 
@@ -99,7 +96,7 @@ const BookingForm = () => {
     fetchRoomsState();
   };
 
-  const getRoomState = (date: string, roomId: mongoose.Types.ObjectId) => {
+  const getRoomState = (date: string, roomId: string) => {
     const existingBookedRoom: IBookedRooms | undefined = roomsState.find(
       (bookedRoom: IBookedRooms) => {
         return bookedRoom.date === date && bookedRoom.roomId === roomId;
@@ -111,9 +108,9 @@ const BookingForm = () => {
     }
 
     const existingSelected:
-      | { date: string; roomId: mongoose.Types.ObjectId }
+      | { date: string; roomId: string }
       | undefined = selectedRoomsRef.current.find(
-      (bookedRoom: { date: string; roomId: mongoose.Types.ObjectId }) => {
+      (bookedRoom: { date: string; roomId: string }) => {
         return bookedRoom.date === date && bookedRoom.roomId === roomId;
       }
     );
@@ -165,9 +162,13 @@ const BookingForm = () => {
         text: state === 1 ? "Booked successfully!" : "Deleted successfully!",
         type: "success",
       });
-    } catch (error: any) {
-      setToast({ text: error.message, type: "error" });
-    } finally {
+    }catch (error: unknown) {
+        if (error instanceof Error) {
+          setToast({ text: error.message, type: "error" });
+        } else {
+          setToast({ text: "An unexpected error occurred", type: "error" });
+        }
+    }finally {
       setSubmitting(false);
       fetchRoomsState();
       clearNameInput();
@@ -182,7 +183,7 @@ const BookingForm = () => {
 
   const generateDates = (start: Date, end: Date): Date[] => {
     const dateArray: Date[] = [];
-    let cur = new Date(start);
+    const cur = new Date(start);
     cur.setHours(0, 0, 0, 0);
     while (cur <= end) {
       dateArray.push(new Date(cur));

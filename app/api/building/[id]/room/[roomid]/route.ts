@@ -4,10 +4,10 @@ import Room from "@/models/room";
 import { NextRequest } from "next/server";
 
 interface Context {
-  params: {
+  params: Promise<{
     roomid: string;
     id?: string;
-  };
+  }>;
 }
 
 interface RoomData {
@@ -34,6 +34,7 @@ export const PATCH = async (req: NextRequest, context: Context) => {
 
     return new Response(JSON.stringify(populatedRoom), { status: 201 });
   } catch (error) {
+    console.error("Failed to update room "+error)
     return new Response("Failed to update room", { status: 500 });
   }
 };
@@ -57,6 +58,7 @@ export const DELETE = async (req: NextRequest, context: Context) => {
 
     return new Response("Room deleted", { status: 201 });
   } catch (error) {
+    console.error("Failed to delete room "+error)
     return new Response("Failed to delete room", { status: 500 });
   }
 };

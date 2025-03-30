@@ -1,11 +1,10 @@
-// components/LogoutForm.tsx
 "use client";
 
-import { useTransition } from "react";
+// import { useTransition } from "react";
 
 const LogoutForm = () => {
-    const [isPending, startTransition] = useTransition();
-
+    // const [isPending, startTransition] = useTransition();
+    const isPending = false
     return (
         <button
             onClick={() =>{}}

@@ -13,7 +13,7 @@ export const connectToDB = async() => {
         return
     }
     if(!process.env.MONGODB_URI){
-        console.log('Mongo URI not present')
+        console.error('Mongo URI not present')
         return
     }
     try{
@@ -32,6 +32,6 @@ export const connectToDB = async() => {
             User.init()
           ]);
     }catch (error){
-        console.log(error)
+        console.error("Error connecting to Mongo DB " + error);
     }
 }

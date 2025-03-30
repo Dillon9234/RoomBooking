@@ -28,7 +28,7 @@ export const POST = async (req:Request) => {
         }
         return new Response("Room(s) booked for all dates", {status: 201})
     }catch(error){
-        console.log(error)
+        console.error("Failed to book room(s)" + error)
         return new Response("Failed to book room(s)", { status:500})
     }
 }
@@ -37,7 +37,6 @@ export const DELETE = async (req:Request) => {
     const { bookings}:{bookings:{date:string, roomId:mongoose.Types.ObjectId}[]} = await req.json()
 
     try{
-        console.log(bookings)
         if(bookings.length == 0)
             return new Response(JSON.stringify("No rooms inputted"),{status:400})
 
@@ -53,7 +52,7 @@ export const DELETE = async (req:Request) => {
 
         return new Response(`Successfully deleted ${deletedCount} booking(s).`, { status: 200 });
     }catch(error){
-        console.log(error)
+        console.error("Failed to delete booking(s)" + error)
         return new Response("Failed to delete booking(s)", { status:500})
     }
 }
