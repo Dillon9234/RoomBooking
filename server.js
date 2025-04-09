@@ -44,10 +44,10 @@ app.use(
   })
 );
 
-app.use("/api/bookroom", bookRoomRoute);
+app.use("/api/bookroom", authenticate, bookRoomRoute);
 app.use("/api/building", buildingRoute);
-app.use("/api/enquirerooms", bookingRoute);
-app.use("/api/getbookedrooms", getBookedRoomsRoute);
+app.use("/api/enquirerooms", authenticate, bookingRoute);
+app.use("/api/getbookedrooms", authenticate, getBookedRoomsRoute);
 app.use("/api/rooms", roomsRoute);
 app.use("/api/auth", authRoute);
 

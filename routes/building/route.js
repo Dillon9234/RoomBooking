@@ -7,6 +7,7 @@ const buildingRoute = require("./[id]/route");
 const buildingNewRoute = require("./new/route");
 const buildingEditRoute = require("./[id]/edit/route");
 const roomRoute = require("./[id]/room/route");
+const authenticate = require("../../middleware/auth");
 
 router.get("/", async (req, res) => {
   try {
@@ -18,7 +19,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.post("/", async (req, res) => {
+router.post("/", authenticate, async (req, res) => {
   try {
     const { name } = req.body;
 
@@ -39,8 +40,8 @@ router.post("/", async (req, res) => {
   }
 });
 
-router.use("/:id/new", buildingNewRoute);
-router.use("/:id/edit", buildingEditRoute);
+router.use("/:id/new", authenticate, buildingNewRoute);
+router.use("/:id/edit",authenticate, buildingEditRoute);
 router.use("/:id/room", roomRoute);
 router.use("/", buildingRoute);
 
