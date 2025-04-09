@@ -2,7 +2,7 @@
 const express = require("express");
 const Building = require("../../../models/building");
 
-const router = express.Router();
+const router = express.Router({ mergeParams: true });
 
 router.get("/:id", async (req, res) => {
   try {

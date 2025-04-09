@@ -3,12 +3,11 @@ const express = require("express");
 const Building = require("../../../../../models/building");
 const Room = require("../../../../../models/room");
 
-const router = express.Router();
+const router = express.Router({ mergeParams: true });
 
 router.post("/", async (req, res) => {
   const { number, capacity } = req.body;
   const { id } = req.params;
-
   try {
     const existingBuilding = await Building.findById(id);
     if (!existingBuilding) {
