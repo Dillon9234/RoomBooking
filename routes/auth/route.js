@@ -37,8 +37,7 @@ router.post("/login", async (req, res) => {
       httpOnly: false,
       secure: false,
       maxAge: 3600000 * 24,
-      sameSite: "None",
-      path: "http://localhost:3000",
+      sameSite: "Lax",
     });
 
     res.status(200).json({
