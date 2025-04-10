@@ -50,7 +50,8 @@ const BookingForm = () => {
       if (selectedBuilding === "Select") return;
       try {
         const response = await fetch(
-          `http://localhost:3000/api/building/${selectedBuilding}`
+          `http://localhost:3000/api/building/${selectedBuilding}`,
+          { credentials: "include" }
         );
         const data = await response.json();
         setRooms(data.rooms);
