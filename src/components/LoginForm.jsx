@@ -17,16 +17,21 @@ const LoginForm = () => {
         setError('');
     
         try {
-            const response = await fetch('http://localhost:3000/api/auth/login',{
+            const response = await fetch('http://localhost:3000/api/auth/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData),
+                credentials: 'include'
             });
     
             const data = await response.json();
     
             if (!response.ok) {
                 throw new Error(data.message || 'Unknown error');
+            }
+    
+            if (data.token) {
+                document.cookie = `token=${data.token}; path=/; max-age=${24 * 60 * 60}; secure; SameSite=Strict`;
             }
     
             window.location.href = '/admin'; 
@@ -36,7 +41,6 @@ const LoginForm = () => {
             setLoading(false);
         }
     };
-    
 
     return (
         <div className="container d-flex justify-content-center align-items-center min-vh-100">

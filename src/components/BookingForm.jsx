@@ -1,24 +1,20 @@
 import React, { useEffect, useRef, useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
-import 'bootstrap/dist/css/bootstrap.min.css';
+import "bootstrap/dist/css/bootstrap.min.css";
 import DatePickerModal from "./DatePickeModal";
 import ToastMessage from "./ToastMessage";
 import RoomTable from "./BookingTable";
-import Swal from 'sweetalert2';
-
+import Swal from "sweetalert2";
 
 const BookingForm = () => {
-  const [submitting, setSubmitting] = useState(false);
+  const [_submitting, setSubmitting] = useState(false);
 
   const [buildings, setBuildings] = useState([]);
   const [selectedBuilding, setSelectedBuilding] = useState("");
 
   const [rooms, setRooms] = useState([]);
 
-  const [dateRange, setDateRange] = useState([
-    null,
-    null,
-  ]);
+  const [dateRange, setDateRange] = useState([null, null]);
   const [startDate, endDate] = dateRange;
 
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -69,7 +65,9 @@ const BookingForm = () => {
   const fetchRoomsState = async () => {
     selectedRoomsRef.current = [];
     try {
-      const response = await fetch(`http://localhost:3000/api/getbookedrooms`);
+      const response = await fetch(`http://localhost:3000/api/getbookedrooms`, {
+        credentials: "include",
+      });
       const data = await response.json();
       setRoomsState(data);
     } catch (error) {
@@ -83,21 +81,17 @@ const BookingForm = () => {
   };
 
   const getRoomState = (date, roomId) => {
-    const existingBookedRoom = roomsState.find(
-      (bookedRoom) => {
-        return bookedRoom.date === date && bookedRoom.roomId === roomId;
-      }
-    );
+    const existingBookedRoom = roomsState.find((bookedRoom) => {
+      return bookedRoom.date === date && bookedRoom.roomId === roomId;
+    });
 
     if (existingBookedRoom) {
       return { status: "Occupied", by: existingBookedRoom.by };
     }
 
-    const existingSelected = selectedRoomsRef.current.find(
-      (bookedRoom) => {
-        return bookedRoom.date === date && bookedRoom.roomId === roomId;
-      }
-    );
+    const existingSelected = selectedRoomsRef.current.find((bookedRoom) => {
+      return bookedRoom.date === date && bookedRoom.roomId === roomId;
+    });
 
     if (existingSelected) {
       return { status: state === 1 ? "Selected" : "DeleteSelected", by: "" };
@@ -108,39 +102,39 @@ const BookingForm = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    
+
     const result = await Swal.fire({
-      title: 'Confirm Allotment',
-      html: 'Are you sure you want to submit this allotment request?',
-      icon: 'question',
+      title: "Confirm Allotment",
+      html: "Are you sure you want to submit this allotment request?",
+      icon: "question",
       showCancelButton: true,
-      confirmButtonText: 'Confirm Allotment',
-      cancelButtonText: 'Review Details',
+      confirmButtonText: "Confirm Allotment",
+      cancelButtonText: "Review Details",
       reverseButtons: true,
-      background: '#2a2a2a',
-      color: '#fff',
+      background: "#2a2a2a",
+      color: "#fff",
       customClass: {
-        confirmButton: 'btn btn-success',
-        cancelButton: 'btn btn-outline-secondary',
-        title: 'text-white',
-        htmlContainer: 'text-white'
+        confirmButton: "btn btn-success",
+        cancelButton: "btn btn-outline-secondary",
+        title: "text-white",
+        htmlContainer: "text-white",
       },
-      buttonsStyling: false
+      buttonsStyling: false,
     });
-  
+
     if (result.isConfirmed) {
       await confirmSubmission();
       Swal.fire({
-        title: 'Success!',
-        text: 'Your allotment has been confirmed.',
-        icon: 'success',
-        background: '#2a2a2a',
-        color: '#fff',
+        title: "Success!",
+        text: "Your allotment has been confirmed.",
+        icon: "success",
+        background: "#2a2a2a",
+        color: "#fff",
         customClass: {
-          confirmButton: 'btn btn-primary',
-          title: 'text-white'
+          confirmButton: "btn btn-primary",
+          title: "text-white",
         },
-        buttonsStyling: false
+        buttonsStyling: false,
       });
     }
   };
@@ -159,8 +153,9 @@ const BookingForm = () => {
         response = await fetch("http://localhost:3000/api/bookroom", {
           method: "POST",
           headers: {
-            'Content-Type': 'application/json'
+            "Content-Type": "application/json",
           },
+          credentials: "include",
           body: JSON.stringify({
             bookings: selectedRoomsRef.current,
             by: bookedBy,
@@ -170,9 +165,10 @@ const BookingForm = () => {
         response = await fetch("http://localhost:3000/api/bookroom", {
           method: "DELETE",
           headers: {
-            'Content-Type': 'application/json'
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({ bookings: selectedRoomsRef.current }),
+          credentials: "include",
         });
       }
       if (!response.ok) {
@@ -211,7 +207,7 @@ const BookingForm = () => {
 
   const dateArray =
     startDate && endDate ? generateDates(startDate, endDate) : [];
-    
+
   return (
     <form
       onSubmit={handleSubmit}
@@ -234,8 +230,11 @@ const BookingForm = () => {
               defaultChecked
               disabled={!state}
             />
-            <label htmlFor="inline-radio" className="form-check-label cursor-pointer">
-            Allot
+            <label
+              htmlFor="inline-radio"
+              className="form-check-label cursor-pointer"
+            >
+              Allot
             </label>
           </div>
           <div
@@ -252,13 +251,16 @@ const BookingForm = () => {
               className="form-check-input cursor-pointer"
               disabled={!state}
             />
-            <label htmlFor="inline-2-radio" className="form-check-label cursor-pointer">
+            <label
+              htmlFor="inline-2-radio"
+              className="form-check-label cursor-pointer"
+            >
               Cancel
             </label>
           </div>
         </div>
       </div>
-      
+
       <div className="row mb-3 justify-content-center">
         <div className="col-md-3 mb-3">
           <select
@@ -280,7 +282,7 @@ const BookingForm = () => {
               ))}
           </select>
         </div>
-        
+
         <div className="col-md-3 mb-3">
           <button
             type="button"
@@ -293,7 +295,7 @@ const BookingForm = () => {
             Date Range
           </button>
         </div>
-        
+
         {state === 1 && (
           <div className="col-md-3 mb-3">
             <input
@@ -305,7 +307,7 @@ const BookingForm = () => {
             />
           </div>
         )}
-        
+
         <div className="col-md-3 mb-3">
           <div className="d-flex gap-2 justify-content-end">
             <button
@@ -317,10 +319,7 @@ const BookingForm = () => {
             >
               Reset
             </button>
-            <button
-              type="submit"
-              className="btn btn-primary"
-            >
+            <button type="submit" className="btn btn-primary">
               Submit
             </button>
           </div>
@@ -336,7 +335,7 @@ const BookingForm = () => {
         fetchRoomsState={fetchRoomsState}
         setOkPressed={setOkPressed}
       />
-      
+
       {rooms?.length > 0 && dateArray?.length > 0 && okPressed ? (
         <RoomTable
           rooms={rooms}
@@ -350,7 +349,7 @@ const BookingForm = () => {
           No Data
         </div>
       )}
-      
+
       {toast && (
         <ToastMessage
           text={toast.text}
