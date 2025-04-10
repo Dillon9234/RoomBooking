@@ -11,7 +11,7 @@ const connectToDB = async () => {
   }
 
   if (!process.env.MONGODB_URI) {
-    console.log("Mongo URI not present");
+    console.error("Mongo URI not present");
     return;
   }
 

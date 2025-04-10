@@ -3,6 +3,7 @@ const cors = require("cors");
 const jwt = require("jsonwebtoken");
 const { connectToDB } = require("./utils/database");
 const cookieParser = require("cookie-parser");
+const authenticate = require("./middleware/auth");
 
 const authRoute = require("./routes/auth/route");
 const bookRoomRoute = require("./routes/bookroom/route");
@@ -12,23 +13,6 @@ const getBookedRoomsRoute = require("./routes/getbookedrooms/route");
 const roomsRoute = require("./routes/rooms/route");
 
 const app = express();
-
-const authenticate = (req, res, next) => {
-  const token = req.cookies?.token;
-  console.log(JSON.stringify(req.headers["Cookie"]));
-
-  if (!token) {
-    return res.status(403).json({ message: "No token, authorization denied" });
-  }
-
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded;
-    next();
-  } catch (err) {
-    return res.status(401).json({ message: "Invalid or expired token" });
-  }
-};
 
 connectToDB();
 

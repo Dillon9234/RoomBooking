@@ -18,7 +18,7 @@ router.post("/", async (req, res) => {
 
     res.status(201).json(newBuilding);
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(500).json("Failed to create a new building");
   }
 });
