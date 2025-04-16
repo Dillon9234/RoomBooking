@@ -128,11 +128,7 @@ const Rooms = () => {
   };
 
   return (
-    <Container
-      fluid
-      className="py-4 px-4"
-      style={{ backgroundColor: "#212529", minHeight: "100vh" }}
-    >
+    <Container className="py-4" style={{ backgroundColor: "#212529", minHeight: "100vh" }}>
       <div className="d-flex justify-content-between align-items-center mb-4">
         <div>
           <Link

@@ -60,11 +60,7 @@ const Rooms = () => {
     fetchRooms();
   }, []);
   return (
-    <Container
-      fluid
-      className="py-4 px-4"
-      style={{ backgroundColor: "#212529", minHeight: "100vh" }}
-    >
+    <Container className="py-4" style={{ backgroundColor: "#212529", minHeight: "100vh" }}>
       <div>
           <Link
             to="/"
