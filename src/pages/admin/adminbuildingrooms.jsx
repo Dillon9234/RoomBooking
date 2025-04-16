@@ -20,6 +20,14 @@ import {
   BsArrowLeft,
   BsPlusCircle,
 } from "react-icons/bs";
+import { jwtDecode } from "jwt-decode";
+import { NavLink, useNavigate } from "react-router-dom";
+
+const getCookie = (name) => {
+  const match = document.cookie.match(new RegExp("(^| )" + name + "=([^;]+)"));
+  return match ? match[2] : null;
+};
+
 
 // Card hover effect styles
 const cardStyle = {
@@ -45,6 +53,27 @@ const AdminBuildingRooms = () => {
   // Modal State
   const [showRoomModal, setShowRoomModal] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState(null);
+
+  const navigate = useNavigate();
+  
+  useEffect(() => {
+
+    const token = getCookie("token"); // Fetch token from cookie
+    let isAdmin = false;
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+
+    try {
+      const decoded = jwtDecode(token);
+    } catch (error) {
+      console.error("Invalid token:", error);
+      navigate("/login");
+      return;
+    }
+
+  }, []);
 
   useEffect(() => {
     const fetchBuildingRooms = async () => {

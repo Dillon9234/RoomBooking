@@ -23,6 +23,13 @@ import {
   BsPeople,
   BsBuilding,
 } from "react-icons/bs";
+import { jwtDecode } from "jwt-decode";
+import { NavLink, useNavigate } from "react-router-dom";
+
+const getCookie = (name) => {
+  const match = document.cookie.match(new RegExp("(^| )" + name + "=([^;]+)"));
+  return match ? match[2] : null;
+};
 
 // Card hover effect styles
 const cardStyle = {
@@ -48,6 +55,27 @@ const Rooms = () => {
   const [toast, setToast] = useState(null);
   const [hoveredCard, setHoveredCard] = useState(null);
 
+  const navigate = useNavigate();
+  
+  useEffect(() => {
+
+    const token = getCookie("token"); // Fetch token from cookie
+    let isAdmin = false;
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+
+    try {
+      const decoded = jwtDecode(token);
+    } catch (error) {
+      console.error("Invalid token:", error);
+      navigate("/login");
+      return;
+    }
+
+  }, []);
+  
   useEffect(() => {
     document.documentElement.setAttribute("data-bs-theme", "dark");
 

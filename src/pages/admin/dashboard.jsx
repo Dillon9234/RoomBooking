@@ -3,8 +3,38 @@ import React from 'react';
 import { Container, Row, Col, Card, Button } from 'react-bootstrap';
 import { Dash } from 'react-bootstrap-icons';
 import { Link } from 'react-router-dom';
+import { jwtDecode } from "jwt-decode";
+import { NavLink, useNavigate } from "react-router-dom";
+
+const getCookie = (name) => {
+  const match = document.cookie.match(new RegExp("(^| )" + name + "=([^;]+)"));
+  return match ? match[2] : null;
+};
+import { useEffect } from 'react';
+import { useState } from 'react';
 
 const Dashboard = () => {
+
+  const navigate = useNavigate();
+  
+  useEffect(() => {
+
+    const token = getCookie("token"); // Fetch token from cookie
+    let isAdmin = false;
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+
+    try {
+      const decoded = jwtDecode(token);
+    } catch (error) {
+      console.error("Invalid token:", error);
+      navigate("/login");
+      return;
+    }
+
+  }, []);
   return (
     <Container className="py-5">
       <h1 className="mb-4">Admin Dashboard</h1>

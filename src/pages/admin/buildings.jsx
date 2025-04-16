@@ -5,7 +5,13 @@ import CreateBuildingForm from "../../components/CreateBuildingForm";
 import ToastMessage from "../../components/ToastMessage";
 import { getBuildings, deleteBuilding } from "../../services/api";
 import { BsBuilding } from 'react-icons/bs'; // Import building icon
+import { jwtDecode } from "jwt-decode";
+import { NavLink, useNavigate } from "react-router-dom";
 
+const getCookie = (name) => {
+  const match = document.cookie.match(new RegExp("(^| )" + name + "=([^;]+)"));
+  return match ? match[2] : null;
+};
 
 const cardStyle = {
   transition: 'transform 0.3s ease, box-shadow 0.3s ease',
@@ -30,8 +36,25 @@ const Buildings = () => {
   const [toast, setToast] = useState(null);
   const [hoveredCard, setHoveredCard] = useState(null);
 
-
+  const navigate = useNavigate();
+  
   useEffect(() => {
+
+    const token = getCookie("token"); // Fetch token from cookie
+    let isAdmin = false;
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+
+    try {
+      const decoded = jwtDecode(token);
+    } catch (error) {
+      console.error("Invalid token:", error);
+      navigate("/login");
+      return;
+    }
+
     fetchBuildings();
     
     // Force dark theme
