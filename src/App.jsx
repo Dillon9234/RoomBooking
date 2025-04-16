@@ -11,6 +11,7 @@ import Dashboard from "./pages/admin/dashboard";
 import Bookings from "./pages/admin/bookings";
 import BuildingRooms from "./pages/buildingrooms";
 import AdminBuildingRooms from "./pages/admin/adminbuildingrooms";
+import PublicBookings from "./pages/publicbooking";
 
 function App() {
   return (
@@ -32,6 +33,14 @@ function App() {
           element={
             <Layout>
               <Buildings />
+            </Layout>
+          }
+        />
+        <Route
+          path="/bookings"
+          element={
+            <Layout>
+              <PublicBookings />
             </Layout>
           }
         />

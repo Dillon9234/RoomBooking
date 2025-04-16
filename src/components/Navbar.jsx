@@ -1,5 +1,5 @@
 import React from "react";
-import { Navbar, Nav, Container } from "react-bootstrap";
+import { Navbar, Nav, Container, Button } from "react-bootstrap";
 import { NavLink, useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 
@@ -19,7 +19,7 @@ const NavigationBar = () => {
   if (token) {
     try {
       const decoded = jwtDecode(token);
-      isAdmin = true
+      isAdmin = true;
     } catch (error) {
       console.error("Invalid token");
     }
@@ -31,6 +31,13 @@ const NavigationBar = () => {
     } else {
       navigate(pathForUser);
     }
+  };
+
+  const handleLogout = () => {
+    // Delete the token cookie
+    document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+    navigate("/");
+    window.location.reload(); // Reload to re-render the navbar state
   };
 
   return (
@@ -48,10 +55,11 @@ const NavigationBar = () => {
               Buildings
             </Nav.Link>
 
-            {token &&
-              (<Nav.Link onClick={() => handleRedirect("/room", "/admin/rooms")} className="text-white" style={{ cursor: "pointer" }}>
-              Rooms
-            </Nav.Link>)}
+            {token && (
+              <Nav.Link onClick={() => handleRedirect("/room", "/admin/rooms")} className="text-white" style={{ cursor: "pointer" }}>
+                Rooms
+              </Nav.Link>
+            )}
 
             {isAdmin && (
               <Nav.Link as={NavLink} to="/admin/bookings" className="text-white">
@@ -59,10 +67,14 @@ const NavigationBar = () => {
               </Nav.Link>
             )}
 
-            {!token && (
+            {!token ? (
               <Nav.Link as={NavLink} to="/login" className="text-white">
                 Login
               </Nav.Link>
+            ) : (
+              <Button variant="outline-light" size="sm" onClick={handleLogout} className="ms-3">
+                Logout
+              </Button>
             )}
           </Nav>
         </Navbar.Collapse>

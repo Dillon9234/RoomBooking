@@ -5,6 +5,7 @@ import DatePickerModal from "./DatePickeModal";
 import ToastMessage from "./ToastMessage";
 import RoomTable from "./BookingTable";
 import Swal from "sweetalert2";
+import PublicRoomTable from "./PublicBookingTable";
 
 const BookingForm = () => {
   const [_submitting, setSubmitting] = useState(false);
@@ -104,7 +105,6 @@ const BookingForm = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if(state === 1){
     const result = await Swal.fire({
       title: "Confirm Allotment",
       html: "Are you sure you want to submit this allotment request?",
@@ -138,42 +138,6 @@ const BookingForm = () => {
         },
         buttonsStyling: false,
       });
-    }}
-    else if(state === 2){
-      const result = await Swal.fire({
-        title: "Confirm Cancellation",
-        html: "Are you sure you want to submit this cancel request?",
-        icon: "question",
-        showCancelButton: true,
-        confirmButtonText: "Confirm Cancellation",
-        cancelButtonText: "Review Details",
-        reverseButtons: true,
-        background: "#2a2a2a",
-        color: "#fff",
-        customClass: {
-          confirmButton: "btn btn-success",
-          cancelButton: "btn btn-outline-secondary",
-          title: "text-white",
-          htmlContainer: "text-white",
-        },
-        buttonsStyling: false,
-      });
-  
-      if (result.isConfirmed) {
-        await confirmSubmission();
-        Swal.fire({
-          title: "Success!",
-          text: "Your cancellation has been confirmed.",
-          icon: "success",
-          background: "#2a2a2a",
-          color: "#fff",
-          customClass: {
-            confirmButton: "btn btn-primary",
-            title: "text-white",
-          },
-          buttonsStyling: false,
-        });
-      } 
     }
   };
 
@@ -251,7 +215,7 @@ const BookingForm = () => {
       onSubmit={handleSubmit}
       className="container-fluid p-4 bg-dark bg-opacity-50 rounded border"
     >
-      <div className="d-flex flex-column align-items-center mb-3">
+      {/* <div className="d-flex flex-column align-items-center mb-3">
         <div className="d-flex gap-4 bg-transparent border text-white p-2 rounded">
           <div
             className="form-check form-check-inline"
@@ -296,8 +260,8 @@ const BookingForm = () => {
               Cancel
             </label>
           </div>
-        </div>
-      </div>
+        </div> */}
+      {/* </div> */}
 
       <div className="row mb-3 justify-content-center">
         <div className="col-md-3 mb-3">
@@ -334,7 +298,7 @@ const BookingForm = () => {
           </button>
         </div>
 
-        {state === 1 && (
+        {/* {state === 1 && (
           <div className="col-md-3 mb-3">
             <input
               type="text"
@@ -344,9 +308,9 @@ const BookingForm = () => {
               ref={nameInput}
             />
           </div>
-        )}
+        )} */}
 
-        <div className="col-md-3 mb-3">
+        {/* <div className="col-md-3 mb-3">
           <div className="d-flex gap-2 justify-content-end">
             <button
               type="button"
@@ -361,7 +325,7 @@ const BookingForm = () => {
               Submit
             </button>
           </div>
-        </div>
+        </div> */}
       </div>
 
       <DatePickerModal
@@ -375,7 +339,7 @@ const BookingForm = () => {
       />
 
       {rooms?.length > 0 && dateArray?.length > 0 && okPressed ? (
-        <RoomTable
+        <PublicRoomTable
           rooms={rooms}
           dateArray={dateArray}
           getRoomState={getRoomState}
@@ -397,6 +361,6 @@ const BookingForm = () => {
       )}
     </form>
   );
-};  
+};
 
 export default BookingForm;

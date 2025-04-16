@@ -7,6 +7,7 @@ import { getBuildings, deleteBuilding } from "../../services/api";
 import { BsBuilding } from 'react-icons/bs'; // Import building icon
 import { jwtDecode } from "jwt-decode";
 import { NavLink, useNavigate } from "react-router-dom";
+import {updateBuilding} from "../../services/api"; // Import your API functions
 
 const getCookie = (name) => {
   const match = document.cookie.match(new RegExp("(^| )" + name + "=([^;]+)"));
@@ -78,10 +79,10 @@ const Buildings = () => {
     setToast({ text: message, type });
   };
 
-  const handleEditBuilding = (building) => {
-    setSelectedBuilding(building);
-    setIsFormOpen(true);
-  };
+  // const handleEditBuilding = (building) => {
+  //   setSelectedBuilding(building);
+  //   setIsFormOpen(true);
+  // };
 
   const handleDeleteBuilding = async (building) => {
     if (!window.confirm(`Are you sure you want to delete "${building.name}"?`)) {
@@ -175,35 +176,55 @@ const Buildings = () => {
         <Alert variant="info">No buildings available at the moment.</Alert>
       ) : (
         <Row xs={1} md={3} lg={4} className="g-4">
-          {buildings.map((building) => (
-            <Col key={building._id}>
-              <Link 
-                to={`/admin/building/${building._id}/rooms`} 
-                className="text-decoration-none"
-              >
-                <Card 
-                  className="h-100" 
-                  style={{
-                    ...cardStyle,
-                    ...(hoveredCard === building._id ? cardHoverStyle : {})
-                  }}
-                  onMouseEnter={() => setHoveredCard(building._id)}
-                  onMouseLeave={() => setHoveredCard(null)}
-                >
-                  <Card.Body className="d-flex flex-column justify-content-center align-items-center p-4 text-white">
-                    <div className="mb-3 text-primary" style={{ fontSize: '2.5rem' }}>
-                      <BsBuilding />
-                    </div>
-                    <Card.Title className="text-center mb-3 fw-bold">{building.name}</Card.Title>
-                    <div className="bg-primary text-white px-3 py-2 rounded-pill">
-                      {building.rooms?.length || 0} Room{building.rooms?.length !== 1 ? 's' : ''}
-                    </div>
-                  </Card.Body>
-                </Card>
-              </Link>
-            </Col>
-          ))}
-        </Row>
+  {buildings.map((building) => (
+    <Col key={building._id}>
+      <Card
+        className="h-100 position-relative"
+        style={{
+          ...cardStyle,
+          ...(hoveredCard === building._id ? cardHoverStyle : {})
+        }}
+        onMouseEnter={() => setHoveredCard(building._id)}
+        onMouseLeave={() => setHoveredCard(null)}
+      >
+        <Link
+          to={`/admin/building/${building._id}/rooms`}
+          className="text-decoration-none text-white"
+        >
+          <Card.Body className="d-flex flex-column justify-content-center align-items-center p-4">
+            <div className="mb-3 text-primary" style={{ fontSize: '2.5rem' }}>
+              <BsBuilding />
+            </div>
+            <Card.Title className="text-center mb-3 fw-bold">
+              {building.name}
+            </Card.Title>
+            <div className="bg-primary text-white px-3 py-2 rounded-pill">
+              {building.rooms?.length || 0} Room{building.rooms?.length !== 1 ? 's' : ''}
+            </div>
+          </Card.Body>
+        </Link>
+
+        <div className="d-flex justify-content-around mb-3">
+          <Button
+            variant="outline-light"
+            size="sm"
+            onClick={() => updateBuilding(building)}
+          >
+            Edit
+          </Button>
+          <Button
+            variant="outline-danger"
+            size="sm"
+            onClick={() => handleDeleteBuilding(building)}
+          >
+            Delete
+          </Button>
+        </div>
+      </Card>
+    </Col>
+  ))}
+</Row>
+
       )}
     </Container>
   );

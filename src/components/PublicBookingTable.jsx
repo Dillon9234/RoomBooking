@@ -1,4 +1,5 @@
 import SelectedRoom from "./SelectedRoom";
+import PublicSelectedRoom from "./PublicSelectedRoom";
 import React from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
@@ -90,8 +91,7 @@ const RoomTable = ({ rooms, dateArray, getRoomState, selected, state }) => {
                         borderTop: "none"
                       }}
                     >
-                      
-                      <SelectedRoom
+                      <PublicSelectedRoom
                         status={status}
                         globalState={state}
                         room={room}
@@ -108,6 +108,7 @@ const RoomTable = ({ rooms, dateArray, getRoomState, selected, state }) => {
                           }
                         }}
                       />
+                      
                     </td>
                   );
                 })}
