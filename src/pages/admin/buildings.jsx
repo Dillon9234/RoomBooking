@@ -208,7 +208,7 @@ const Buildings = () => {
           <Button
             variant="outline-light"
             size="sm"
-            onClick={() => updateBuilding(building)}
+            onClick={() => updateBuilding (building)}
           >
             Edit
           </Button>
