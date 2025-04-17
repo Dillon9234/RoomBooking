@@ -1,4 +1,5 @@
 import Navbar from '@/components/Navbar';
+import { AuthProvider } from '@/components/AuthContext';
 import '@/styles/globals.css'
 
 export default async function RootLayout({
@@ -10,8 +11,10 @@ export default async function RootLayout({
     <html lang="en">
         <body className='bg-black text-white'>
           <main>
-            <Navbar/>
-            {children}
+            <AuthProvider>
+              <Navbar/>
+              {children}
+            </AuthProvider>
           </main> 
         </body>
         

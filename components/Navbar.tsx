@@ -1,14 +1,16 @@
 'use client'
 import Link from 'next/link'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import LogoutForm from './LogoutForm';
+import { useAuth } from './AuthContext';
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
     const toggleMenu = () => {
         setIsOpen(!isOpen);
     };
-    
+
+    const { authenticated } = useAuth();
 
     return (
         <nav className="border-b bg-black border-[#575757] bg-opacity-50">
@@ -36,7 +38,7 @@ const Navbar = () => {
                             </Link>
                         </li>
                         
-                        {(true) ?<>
+                        {(authenticated)?<>
                             <li>
                                 <Link href="/admin/buildings" className="block py-2 px-3 rounded-sm md:border-0 md:p-0 text-white md:hover:text-blue-500 hover:bg-gray-700 hover:text-white md:hover:bg-transparent">
                                     Buildings

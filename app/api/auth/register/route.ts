@@ -1,10 +1,10 @@
-import IUser from "@/interfaces/IUser";
 import User from "@/models/user";
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcrypt";
 import { connectToDB } from "@/utils/database";
+import { withAuth } from "@/middleware/auth";
 
-export const POST = async (req:NextRequest) => {
+const rawPost = async (req:NextRequest) => {
     try{
         const { username, password, role} : {username:string,password:string,role:string} = await req.json();
 
@@ -33,3 +33,5 @@ export const POST = async (req:NextRequest) => {
         return new Response("Failed to register user", {status:500})
     }
 }
+
+export const POST = withAuth(rawPost, { roles: ["user"] });
