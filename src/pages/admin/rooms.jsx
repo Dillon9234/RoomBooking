@@ -56,9 +56,8 @@ const Rooms = () => {
   const [hoveredCard, setHoveredCard] = useState(null);
 
   const navigate = useNavigate();
-  
-  useEffect(() => {
 
+  useEffect(() => {
     const token = getCookie("token"); // Fetch token from cookie
     let isAdmin = false;
     if (!token) {
@@ -73,9 +72,8 @@ const Rooms = () => {
       navigate("/login");
       return;
     }
-
   }, []);
-  
+
   useEffect(() => {
     document.documentElement.setAttribute("data-bs-theme", "dark");
 
@@ -128,7 +126,10 @@ const Rooms = () => {
   };
 
   return (
-    <Container className="py-4" style={{ backgroundColor: "#212529", minHeight: "100vh" }}>
+    <Container
+      className="py-4"
+      style={{ backgroundColor: "#212529", minHeight: "100vh" }}
+    >
       <div className="d-flex justify-content-between align-items-center mb-4">
         <div>
           <Link
@@ -171,7 +172,10 @@ const Rooms = () => {
             );
             showToast(`Room updated successfully`, "success");
           }}
-          onError={(errorMessage) => showToast(errorMessage, "danger")}
+          onError={(errorMessage) => {
+            console.error(errorMessage);
+            showToast("Room already exists", "danger");
+          }}
           room={selectedRoom}
         />
       )}
