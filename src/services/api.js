@@ -15,11 +15,12 @@ export const getBuildings = async () => {
 
 export const createBuilding = async (buildingData) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/building`, {
+    const response = await fetch(`${API_BASE_URL}/building/new`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
+      credentials: "include",
       body: JSON.stringify(buildingData),
     })
 
@@ -42,6 +43,7 @@ export const updateBuilding = async (id, buildingData) => {
       headers: {
         'Content-Type': 'application/json',
       },
+      credentials: "include",
       body: JSON.stringify(buildingData),
     })
 
@@ -64,6 +66,7 @@ export const deleteBuilding = async (id) => {
       headers: {
         'Content-Type': 'application/json',
       },
+      credentials: "include",
     })
 
     if (!response.ok) {
