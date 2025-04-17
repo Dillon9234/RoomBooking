@@ -40,7 +40,7 @@ router.post("/", authenticate, async (req, res) => {
   }
 });
 
-router.use("/:id/new", authenticate, buildingNewRoute);
+router.use("/new", authenticate, buildingNewRoute);
 router.use("/:id/edit",authenticate, buildingEditRoute);
 router.use("/:id/room", roomRoute);
 router.use("/", buildingRoute);

@@ -4,9 +4,9 @@ const Building = require("../../../../models/building");
 const Room = require("../../../../models/room");
 const { Types } = require("mongoose");
 
-const router = express.Router();
+const router = express.Router({ mergeParams: true });
 
-router.patch("/:id", async (req, res) => {
+router.patch("/", async (req, res) => {
   const { id } = req.params;
   const { name } = req.body;
 
@@ -37,7 +37,7 @@ router.patch("/:id", async (req, res) => {
   }
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/", async (req, res) => {
   const { id } = req.params;
 
   try {
