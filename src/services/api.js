@@ -20,7 +20,7 @@ export const createBuilding = async (buildingData) => {
       headers: {
         'Content-Type': 'application/json',
       },
-      credentials: "include",
+      credentials: 'include',
       body: JSON.stringify(buildingData),
     })
 
@@ -43,7 +43,7 @@ export const updateBuilding = async (id, buildingData) => {
       headers: {
         'Content-Type': 'application/json',
       },
-      credentials: "include",
+      credentials: 'include',
       body: JSON.stringify(buildingData),
     })
 
@@ -66,7 +66,7 @@ export const deleteBuilding = async (id) => {
       headers: {
         'Content-Type': 'application/json',
       },
-      credentials: "include",
+      credentials: 'include',
     })
 
     if (!response.ok) {

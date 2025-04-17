@@ -205,13 +205,16 @@ const Buildings = () => {
         </Link>
 
         <div className="d-flex justify-content-around mb-3">
-          <Button
-            variant="outline-light"
-            size="sm"
-            onClick={() => updateBuilding (building)}
-          >
-            Edit
-          </Button>
+        <Button
+  variant="outline-light"
+  size="sm"
+  onClick={() => {
+    setSelectedBuilding(building);  // Set selected building
+    setIsFormOpen(true);            // Open form
+  }}
+>
+  Edit
+</Button>
           <Button
             variant="outline-danger"
             size="sm"

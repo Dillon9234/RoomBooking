@@ -1,81 +1,60 @@
-import React, { useState } from 'react';
-import { Modal, Button, Form } from 'react-bootstrap';
-import { createBuilding, updateBuilding } from '../services/api';
+import React, { useEffect, useState } from "react";
+import { Modal, Form, Button } from "react-bootstrap";
+import { createBuilding, updateBuilding } from "../services/api";
 
-const CreateBuildingForm = ({ isOpen, onClose, onBuildingAdded, onEditBuilding, onError, building }) => {
-    const [submitting, setSubmitting] = useState(false);
-    const [name, setName] = useState(building?.name || '');
+const CreateBuildingForm = ({ isOpen, onClose, building, onBuildingAdded, onEditBuilding, onError }) => {
+  const [name, setName] = useState("");
 
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-        setSubmitting(true);
-        
-        try {
-            if (building) {
-                // Update existing building
-                const updatedBuilding = await updateBuilding(building._id, { name });
-                onEditBuilding(updatedBuilding);
-            } else {
-                // Create new building
-                const newBuilding = await createBuilding({ name });
-                onBuildingAdded(newBuilding);
-            }
-            
-            onClose();
-        } catch (error) {
-            console.error(error);
-            if (onError) {
-                onError(error.message || "An error occurred");
-            }
-        } finally {
-            setSubmitting(false);
-        }
-    };
+  useEffect(() => {
+    if (building) {
+      setName(building.name || "");
+    } else {
+      setName("");
+    }
+  }, [building]);
 
-    if (!isOpen) return null;
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-    return (
-        <Modal show={isOpen} onHide={onClose} centered data-bs-theme="dark">
-            <Modal.Header closeButton>
-                <Modal.Title className='text-white'>{building ? "Edit Building" : "Create New Building"}</Modal.Title>
-            </Modal.Header>
-            
-            <Modal.Body>
-                <Form onSubmit={handleSubmit}>
-                    <Form.Group className="mb-3">
-                        <Form.Label className='text-white'>Building Name</Form.Label>
-                        <Form.Control
-                            type="text"
-                            placeholder="Enter building name"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            required
-                        />
-                    </Form.Group>
-                </Form>
-            </Modal.Body>
-            
-            <Modal.Footer>
-                <Button variant="secondary" onClick={onClose}>
-                    Cancel
-                </Button>
-                <Button 
-                    variant="primary" 
-                    onClick={handleSubmit} 
-                    disabled={submitting}
-                >
-                    {submitting ? (
-                        <>
-                            <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                            {building ? "Updating..." : "Creating..."}
-                        </>
-                    ) : (
-                        building ? "Update Building" : "Create Building"
-                    )}
-                </Button>
-            </Modal.Footer>
-        </Modal>
-    );
+    try {
+      if (building) {
+        const updated = await updateBuilding(building._id, { name });
+        onEditBuilding(updated);
+      } else {
+        const created = await createBuilding({ name });
+        onBuildingAdded(created);
+      }
+      onClose();
+    } catch (error) {
+      console.error(error);
+      onError(error.message || "Failed to submit building");
+    }
+  };
+
+  return (
+    <Modal show={isOpen} onHide={onClose}>
+      <Modal.Header closeButton>
+        <Modal.Title>{building ? "Edit Building" : "Create Building"}</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Form onSubmit={handleSubmit}>
+          <Form.Group controlId="buildingName" className="mb-3">
+            <Form.Label>Name</Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="Enter building name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+            />
+          </Form.Group>
+          <Button type="submit" variant="primary">
+            {building ? "Update" : "Create"}
+          </Button>
+        </Form>
+      </Modal.Body>
+    </Modal>
+  );
 };
 
 export default CreateBuildingForm;
