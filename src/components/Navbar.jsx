@@ -60,12 +60,9 @@ const NavigationBar = () => {
                 Rooms
               </Nav.Link>
             )}
-
-            {isAdmin && (
-              <Nav.Link as={NavLink} to="/admin/bookings" className="text-white">
-                Allotment
-              </Nav.Link>
-            )}
+            <Nav.Link onClick={() => handleRedirect("/bookings", "/admin/bookings")} className="text-white" style={{ cursor: "pointer" }}>
+              Allotment
+            </Nav.Link>
 
             {!token ? (
               <Nav.Link as={NavLink} to="/login" className="text-white">
