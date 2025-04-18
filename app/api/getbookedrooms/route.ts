@@ -10,8 +10,8 @@ export const GET = async () => {
         return new Response(JSON.stringify(bookedRooms), {status: 200})
 
     }catch(error){
-        console.error("Failed to fetch all days " + error)
-        return new Response("Failed to fetch all days", 
+        console.error("Failed to fetch booked room(s) " + error)
+        return new Response("Failed to fetch booked room(s) ", 
             {status: 500})
     }
 }

@@ -195,7 +195,7 @@ const BookingForm = () => {
 
   const dateArray =
     startDate && endDate ? generateDates(startDate, endDate) : [];
-  const {authenticated, role} = useAuth()
+  const {authenticated} = useAuth()
   if(!authenticated)
     return <></>;
   return (

@@ -62,7 +62,7 @@ const CreateRoomForm: React.FC<CreateRoomFormProps> = ({ isOpen, onClose, onRoom
                     throw new Error(errorData.message || "Failed to create room");
                 }
             } else {
-                const response = await fetch(`/api/building/${buildingId}/room/${room._id}`, {
+                const response = await fetch(`/api/building/${buildingId}/room/edit/${room._id}`, {
                     method: 'PATCH',
                     body: JSON.stringify({ number, capacity }),
                     headers: { 'Content-Type': 'application/json' },

@@ -106,7 +106,7 @@ const Rooms = () => {
 
   const handleDeleteRoom = async (room: RoomDeconstructed) => {
     try {
-      const response = await fetch(`/api/building/${room.buildingId}/room/${room._id}`, {
+      const response = await fetch(`/api/building/${room.buildingId}/room/edit/${room._id}`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
       });

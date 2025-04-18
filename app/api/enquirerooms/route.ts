@@ -22,7 +22,7 @@ export const POST = async (req:Request) => {
 
         return new Response(JSON.stringify(conflicts), {status: 201})
     }catch(error){
-        console.error("Failed to book room(s) "+error)
-        return new Response("Failed to book room(s)", { status:500})
+        console.error("Failed to enuire room(s) "+error)
+        return new Response("Failed to enuire room(s)", { status:500})
     }
 }
