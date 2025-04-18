@@ -1,3 +1,4 @@
+import IUser from "@/interfaces/IUser";
 import User from "@/models/user";
 import { connectToDB } from "@/utils/database";
 import { createSession } from "@/utils/session";
@@ -12,15 +13,15 @@ export const POST = async(req:NextRequest) => {
 
     const user = await User.findOne({ username });
     if (!user) 
-        return new Response ("Invalid credentials",{status:401});
+        return NextResponse.json({message:"Invalid credentials"},{status:401});
 
     const valid = await bcrypt.compare(password, user.hashedPassword);
     if (!valid) 
-        return new Response ("Invalid credentials",{status:401});
+        return NextResponse.json({message:"Invalid credentials"},{status:401});
 
     const sessionId = await createSession(user._id);
 
-    const response = new NextResponse("logged in succesfuly",{status:201})
+    const response = NextResponse.json({message:"logged in succesfuly",username:user.name,role:user.role},{status:201})
 
     response.cookies.set({
         name: "session_id",
@@ -34,6 +35,6 @@ export const POST = async(req:NextRequest) => {
     return response
   }catch(error){
     console.error("Failed to Login" + error)
-    return new Response("Failed to Login", {status:500})
+    return NextResponse.json({message:"Failed to Login"},{status:500});
   }
 }

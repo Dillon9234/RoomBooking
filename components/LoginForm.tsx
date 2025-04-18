@@ -3,6 +3,7 @@
 import React, { useState } from 'react'
 import ToastMessage from './ToastMessage';
 import { useRouter } from 'next/navigation';
+import { useAuth } from './AuthContext';
 
 const LoginForm = () => {
 
@@ -12,6 +13,8 @@ const LoginForm = () => {
         text: string;
         type: "success" | "error";
       } | null>(null);
+
+    const {setAuthenticated} = useAuth()
 
     const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -34,10 +37,12 @@ const LoginForm = () => {
           });
     
           if (res.ok) {
+            const user = await res.json()
+            setAuthenticated(true,user.role)
             showToast("Login Successful","success")
             router.push('/');
           } else {
-            showToast("Login Failed","error")
+            showToast("Invalid Credentials" ,"error")
           }
         } catch (error) {
           showToast("Something went wrong","error")
