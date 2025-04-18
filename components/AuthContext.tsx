@@ -3,41 +3,50 @@ import { createContext, useContext, useState, useEffect, ReactNode } from 'react
 
 interface AuthContextType {
   authenticated: boolean;
-  setAuthenticated: (value: boolean) => void;
+  role: string;
+  setAuthenticated: (authenticated: boolean, role: string) => void;
 }
 
 const AuthContext = createContext<AuthContextType>({
   authenticated: false,
+  role: "",
   setAuthenticated: () => {},
 });
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [authenticated, setAuthenticated] = useState(false);
+  const [authenticated, setAuthenticatedState] = useState(false);
+  const [role, setRole] = useState("");
+
+  const setAuthenticated = (auth: boolean, userRole: string) => {
+    setAuthenticatedState(auth);
+    setRole(userRole || "");
+  };
 
   useEffect(() => {
     const checkAuth = async () => {
       try {
         const res = await fetch('/api/auth/user', {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            credentials: 'include',
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
         });
-        if(res.ok){
-            setAuthenticated(await res.json())
-        }else{
-            setAuthenticated(false)
+        if (res.ok) {
+          const userData = await res.json();
+          setAuthenticated(userData.authenticated, userData.role);
+        } else {
+          setAuthenticated(false, "");
         }
-      } catch(error) {
-        setAuthenticated(false);
+      } catch (error) {
+        setAuthenticated(false, "");
       }
     };
     checkAuth();
   }, []);
 
   return (
-    <AuthContext.Provider value={{ authenticated, setAuthenticated }}>
+    <AuthContext.Provider value={{ authenticated, role, setAuthenticated }}>
       {children}
     </AuthContext.Provider>
   );

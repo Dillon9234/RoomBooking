@@ -34,4 +34,4 @@ const rawPost = async (req:NextRequest) => {
     }
 }
 
-export const POST = withAuth(rawPost, { roles: ["user"] });
+export const POST = withAuth(rawPost, { roles: ["admin"] });

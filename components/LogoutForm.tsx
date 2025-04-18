@@ -9,7 +9,6 @@ const LogoutForm = () => {
 
     const [isPending, setIsPending] = useState(false)
     const router = useRouter()
-    const { setAuthenticated } = useAuth()
 
     const [toast, setToast] = useState<{
         text: string;
@@ -33,7 +32,6 @@ const LogoutForm = () => {
     
           if (res.ok) {
             showToast("Logout Successful","success")
-            setAuthenticated(false)
             router.push('/login');
           } else {
             showToast("Logout Failed","error")

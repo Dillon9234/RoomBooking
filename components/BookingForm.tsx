@@ -8,6 +8,7 @@ import DatePickerModal from "./DatePickeModal";
 import ToastMessage from "./ToastMessage";
 import RoomTable from "./BookingTable";
 import IBookedRooms from "@/interfaces/IBookedRooms";
+import { useAuth } from "./AuthContext";
 
 const BookingForm = () => {
   const [submitting, setSubmitting] = useState(false);
@@ -194,6 +195,9 @@ const BookingForm = () => {
 
   const dateArray =
     startDate && endDate ? generateDates(startDate, endDate) : [];
+  const {authenticated, role} = useAuth()
+  if(!authenticated)
+    return <></>;
   return (
     <form
       onSubmit={handleSubmit}

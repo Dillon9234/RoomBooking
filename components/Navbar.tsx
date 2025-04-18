@@ -9,8 +9,11 @@ const Navbar = () => {
     const toggleMenu = () => {
         setIsOpen(!isOpen);
     };
+    const { authenticated, role } = useAuth();
 
-    const { authenticated } = useAuth();
+    useEffect(()=>{
+        console.log(authenticated)
+    },[authenticated])
 
     return (
         <nav className="border-b bg-black border-[#575757] bg-opacity-50">
@@ -38,7 +41,7 @@ const Navbar = () => {
                             </Link>
                         </li>
                         
-                        {(authenticated)?<>
+                        {(authenticated && role === "admin")?<>
                             <li>
                                 <Link href="/admin/buildings" className="block py-2 px-3 rounded-sm md:border-0 md:p-0 text-white md:hover:text-blue-500 hover:bg-gray-700 hover:text-white md:hover:bg-transparent">
                                     Buildings

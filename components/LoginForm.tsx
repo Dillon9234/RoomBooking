@@ -8,7 +8,6 @@ import { useAuth } from './AuthContext';
 const LoginForm = () => {
 
     const router = useRouter()
-    const { setAuthenticated } = useAuth()
 
     const [toast, setToast] = useState<{
         text: string;
@@ -31,21 +30,18 @@ const LoginForm = () => {
             headers: {
               'Content-Type': 'application/json',
             },
-            credentials: 'include', // send and receive cookies
+            credentials: 'include',
             body: JSON.stringify({ username, password }),
           });
     
           if (res.ok) {
             showToast("Login Successful","success")
-            setAuthenticated(true)
             router.push('/');
           } else {
-            setAuthenticated(false)
             showToast("Login Failed","error")
           }
         } catch (error) {
           console.error('Login error:', error);
-          setAuthenticated(false)
           showToast("Something went wrong","error")
         }
       };
