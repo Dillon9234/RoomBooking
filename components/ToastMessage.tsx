@@ -20,7 +20,7 @@ export default function ToastMessage({ text, type, onClose }: toastMessageProps)
             }, 300);
 
             return () => clearTimeout(closeTimer);
-        }, 3000); // Auto-hide after 3 seconds
+        }, 3000);
 
         return () => clearTimeout(timer);
     }, [onClose]);

@@ -1,6 +1,6 @@
 'use client'
 import Link from 'next/link'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import LogoutForm from './LogoutForm';
 import { useAuth } from './AuthContext';
 
@@ -10,10 +10,6 @@ const Navbar = () => {
         setIsOpen(!isOpen);
     };
     const { authenticated, role } = useAuth();
-
-    useEffect(()=>{
-        console.log(authenticated)
-    },[authenticated])
 
     return (
         <nav className="border-b bg-black border-[#575757] bg-opacity-50">

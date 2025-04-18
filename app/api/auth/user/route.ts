@@ -1,5 +1,6 @@
 import IUser from '@/interfaces/IUser';
 import User from '@/models/user';
+import { connectToDB } from '@/utils/database';
 import { NextRequest } from 'next/server';
 
 export const GET = async (req: NextRequest) => {
@@ -10,6 +11,7 @@ export const GET = async (req: NextRequest) => {
     if(!sessionId){
         return new Response(JSON.stringify({authenticated, role}),{status:400})
     }
+    connectToDB()
     const user:IUser|null = await User.findOne({sessionId}); 
     
     if (!user) {
