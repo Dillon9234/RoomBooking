@@ -4,9 +4,9 @@ import { protectedRoutes } from "@/middleware/config";
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  const matched = protectedRoutes.find(({ path }: { path: string }) =>
-    pathname.startsWith(path)
-  );
+  const matched = protectedRoutes.find(({ path }) =>
+    path.test(pathname)
+  );  
   if (!matched) return NextResponse.next();
 
   const sessionDataRes = await fetch(`${req.nextUrl.origin}/api/auth/user`, {
