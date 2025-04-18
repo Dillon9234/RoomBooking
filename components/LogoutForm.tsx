@@ -35,7 +35,6 @@ const LogoutForm = () => {
             showToast("Logout Failed","error")
           }
         } catch (error) {
-          console.error('Logout error:', error);
           showToast("Something went wrong","error")
         }finally{
             setIsPending(false)

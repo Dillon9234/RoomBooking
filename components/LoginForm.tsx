@@ -40,7 +40,6 @@ const LoginForm = () => {
             showToast("Login Failed","error")
           }
         } catch (error) {
-          console.error('Login error:', error);
           showToast("Something went wrong","error")
         }
       };

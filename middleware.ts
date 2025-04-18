@@ -6,7 +6,7 @@ export async function middleware(req: NextRequest) {
 
   const matched = protectedRoutes.find(({ path }) =>
     path.test(pathname)
-  );  
+  );
   if (!matched) return NextResponse.next();
 
   const sessionDataRes = await fetch(`${req.nextUrl.origin}/api/auth/user`, {
@@ -16,13 +16,19 @@ export async function middleware(req: NextRequest) {
   });
 
   if (!sessionDataRes.ok) {
-    return new NextResponse("Unauthorized", { status: 401 });
+    return NextResponse.json(
+      { message: "Unauthorized" },
+      { status: 401 }
+    );
   }
 
-  const { role }:{ role:string } = await sessionDataRes.json();
+  const { role }: { role: string } = await sessionDataRes.json();
 
   if (matched.roles && !matched.roles.includes(role)) {
-    return new NextResponse("Forbidden: Insufficient role", { status: 403 });
+    return NextResponse.json(
+      { message: "Forbidden: Insufficient role" },
+      { status: 403 }
+    );
   }
 
   const requestHeaders = new Headers(req.headers);

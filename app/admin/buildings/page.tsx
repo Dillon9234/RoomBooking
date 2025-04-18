@@ -70,7 +70,6 @@ const Buildings = (): React.JSX.Element => {
                 throw new Error(errorData.message || "Failed to delete building");
             }
         } catch (err) {
-            console.error("Failed to delete building" + err);
             const errorMessage = err instanceof Error ? err.message : "Failed to delete building";
             showToast(errorMessage, "error");
         }
@@ -99,7 +98,6 @@ const Buildings = (): React.JSX.Element => {
             setBuildings(updatedBuildings);
             showToast(`Selected building(s) deleted successfully`, "success");
         } catch (err) {
-            console.error("Failed to delete building(s)" + err);
             const errorMessage = err instanceof Error ? err.message : "Failed to delete building(s)";
             showToast(errorMessage, "error");
         }

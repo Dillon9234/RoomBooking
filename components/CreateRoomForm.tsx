@@ -79,7 +79,6 @@ const CreateRoomForm: React.FC<CreateRoomFormProps> = ({ isOpen, onClose, onRoom
             }
             
         } catch (error) {
-            console.error("An error occurred "+ error);
             if (onError) {
                 onError((error as Error).message || "An error occurred");
             }

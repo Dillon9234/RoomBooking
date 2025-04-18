@@ -124,7 +124,6 @@ const Rooms = () => {
         throw new Error(errorData.message || "Failed to delete building");
       }
     } catch (error) {
-      console.error("Failed to delete building"+ error);
       const errorMessage = error instanceof Error ? error.message : "Failed to delete building";
       showToast(errorMessage, "error");
     }
@@ -154,7 +153,6 @@ const Rooms = () => {
         setRooms(updatedRooms);
         showToast(`Selected room(s) deleted successfully`, "success");
     } catch (err) {
-        console.error("Failed to delete room(s) " + err);
         const errorMessage = err instanceof Error ? err.message : "Failed to delete room(s)";
         showToast(errorMessage, "error");
     }
