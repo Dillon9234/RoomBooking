@@ -40,7 +40,6 @@ const CreateBuildingForm: React.FC<CreateBuildingFormProps> = ({ isOpen, onClose
                 if (response.ok) {
                     const newBuilding: Building = await response.json();
                     onBuildingAdded(newBuilding);
-                    onClose();
                 } else {
                     const errorData = await response.json();
                     throw new Error(errorData.message || "Failed to create building");
@@ -55,7 +54,6 @@ const CreateBuildingForm: React.FC<CreateBuildingFormProps> = ({ isOpen, onClose
                 if (response.ok) {
                     const updatedBuilding: Building = await response.json();
                     onEditBuilding(updatedBuilding)
-                    onClose(); 
                 } else {
                     const errorData = await response.json();
                     throw new Error(errorData.message || "Failed to update building");
@@ -68,6 +66,7 @@ const CreateBuildingForm: React.FC<CreateBuildingFormProps> = ({ isOpen, onClose
             }
         } finally {
             setSubmitting(false);
+            onClose(); 
         }
     };
 

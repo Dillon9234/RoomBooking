@@ -56,7 +56,6 @@ const CreateRoomForm: React.FC<CreateRoomFormProps> = ({ isOpen, onClose, onRoom
                 if (response.ok) {
                     const newRoom: Room = await response.json();
                     onRoomAdded(newRoom);
-                    onClose();
                 } else {
                     const errorData = await response.json();
                     throw new Error(errorData.message || "Failed to create room");
@@ -71,7 +70,6 @@ const CreateRoomForm: React.FC<CreateRoomFormProps> = ({ isOpen, onClose, onRoom
                 if (response.ok) {
                     const updatedRoom: Room = await response.json();
                     onEditRoom(updatedRoom)
-                    onClose(); 
                 } else {
                     const errorData = await response.json();
                     throw new Error(errorData.message || "Failed to update room");
@@ -84,6 +82,7 @@ const CreateRoomForm: React.FC<CreateRoomFormProps> = ({ isOpen, onClose, onRoom
             }
         } finally {
             setSubmitting(false);
+            onClose(); 
         }
     };
 

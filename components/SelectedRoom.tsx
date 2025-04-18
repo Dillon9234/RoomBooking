@@ -43,7 +43,7 @@ const SelectedRoom = ({status, setSelected, globalState}:selectedRoomsProps) => 
         setCurStatus('Selected')
         setSelected(true)
       }
-    }else{
+    }else if (globalState == 2){
       if(curStatus === 'Occupied') {
         setCurStatus('DeleteSelected')
         setSelected(true); 
@@ -52,8 +52,7 @@ const SelectedRoom = ({status, setSelected, globalState}:selectedRoomsProps) => 
         setCurStatus('Occupied')
         setSelected(false)
       }
-    }
-    
+    }    
   }
 
 

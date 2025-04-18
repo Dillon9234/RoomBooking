@@ -2,15 +2,14 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
-import ConfirmBox from "./ConfirmBox";
 import mongoose from "mongoose";
 import DatePickerModal from "./DatePickeModal";
 import ToastMessage from "./ToastMessage";
-import RoomTable from "./BookingTable";
+import RoomTablePublic from "./BookingTablePublic";
 import IBookedRooms from "@/interfaces/IBookedRooms";
 import { useAuth } from "./AuthContext";
 
-const BookingForm = () => {
+const BookingFormPublic = () => {
   const [submitting, setSubmitting] = useState(false);
 
   const [buildings, setBuildings] = useState<
@@ -36,13 +35,6 @@ const BookingForm = () => {
 
   const [okPressed, setOkPressed] = useState(false);
 
-  const [state, setState] = useState(Number);
-  const nameInput = useRef<HTMLInputElement>(null);
-
-  const selectedRoomsRef = useRef<
-    { date: string; roomId: string }[]
-  >([]);
-
   const [toast, setToast] = useState<{
     text: string;
     type: "success" | "error";
@@ -58,7 +50,6 @@ const BookingForm = () => {
         console.error("Error fetching buildings "+error);
       }
     };
-    setState(1);
     fetchBuildings();
   }, []);
 
@@ -80,7 +71,6 @@ const BookingForm = () => {
   }, [selectedBuilding]);
 
   const fetchRoomsState = async () => {
-    selectedRoomsRef.current = [];
     try {
       const response: Response = await fetch(`/api/getbookedrooms`);
       const data = await response.json();
@@ -107,19 +97,6 @@ const BookingForm = () => {
     if (existingBookedRoom) {
       return { status: "Occupied", by: existingBookedRoom.by };
     }
-
-    const existingSelected:
-      | { date: string; roomId: string }
-      | undefined = selectedRoomsRef.current.find(
-      (bookedRoom: { date: string; roomId: string }) => {
-        return bookedRoom.date === date && bookedRoom.roomId === roomId;
-      }
-    );
-
-    if (existingSelected) {
-      return { status: state === 1 ? "Selected" : "DeleteSelected", by: "" };
-    }
-
     return { status: "Unselected", by: "" };
   };
 
@@ -129,57 +106,6 @@ const BookingForm = () => {
     event.preventDefault();
     if (submitting) return;
     setSubmitting(true);
-  };
-
-  const confirmSubmission = async () => {
-    try {
-      if (selectedRoomsRef.current.length === 0) {
-        throw new Error("No rooms selected.");
-      }
-      let response;
-      if (state == 1) {
-        const bookedBy = nameInput?.current?.value;
-        if (!bookedBy) {
-          throw new Error("Please enter a name.");
-        }
-        response = await fetch("/api/bookroom", {
-          method: "POST",
-          body: JSON.stringify({
-            bookings: selectedRoomsRef.current,
-            by: bookedBy,
-          }),
-        });
-      } else {
-        response = await fetch("/api/bookroom", {
-          method: "DELETE",
-          body: JSON.stringify({ bookings: selectedRoomsRef.current }),
-        });
-      }
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText || "Failed to process request.");
-      }
-      setToast({
-        text: state === 1 ? "Booked successfully!" : "Deleted successfully!",
-        type: "success",
-      });
-    }catch (error: unknown) {
-        if (error instanceof Error) {
-          setToast({ text: error.message, type: "error" });
-        } else {
-          setToast({ text: "An unexpected error occurred", type: "error" });
-        }
-    }finally {
-      setSubmitting(false);
-      fetchRoomsState();
-      clearNameInput();
-    }
-  };
-
-  const clearNameInput = () => {
-    if (nameInput.current) {
-      nameInput.current.value = "";
-    }
   };
 
   const generateDates = (start: Date, end: Date): Date[] => {
@@ -200,49 +126,6 @@ const BookingForm = () => {
       onSubmit={handleSubmit}
       className="w-full flex flex-col gap-2 font-mono items-center bg-black bg-opacity-50 p-10 rounded-lg border"
     >
-      <div className="flex flex-col items-center">
-        <div className="flex flex-row gap-10 justify my-2 bg-transparent border text-white px-4 py-2 rounded-lg h-10 max-w-max">
-          <div
-            className="flex items-center"
-            onClick={() => {
-              setState(1);
-              selectedRoomsRef.current = [];
-            }}
-          >
-            <input
-              id="inline-radio"
-              type="radio"
-              value=""
-              name="inline-radio-group"
-              className="cursor-pointer text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 focus:ring-0"
-              defaultChecked
-              disabled={!state}
-            />
-            <label htmlFor="inline-radio" className="ms-2 cursor-pointer">
-              Book
-            </label>
-          </div>
-          <div
-            className="flex items-center"
-            onClick={() => {
-              setState(2);
-              selectedRoomsRef.current = [];
-            }}
-          >
-            <input
-              id="inline-2-radio"
-              type="radio"
-              value=""
-              name="inline-radio-group"
-              className="cursor-pointer text-[#9dabff] focus:ring-[#9dabff] focus:ring-0"
-              disabled={!state}
-            />
-            <label htmlFor="inline-2-radio" className="ms-2 cursor-pointer">
-              Cancel
-            </label>
-          </div>
-        </div>
-      </div>
       <div className="w-full flex flex-wrap gap-5 justify-evenly">
         <div className="flex flex-col justify-center items-center w-52">
           <select
@@ -292,57 +175,12 @@ const BookingForm = () => {
             setOkPressed={setOkPressed}
           />
         </div>
-        {state === 1 && (
-          <div className="py-2 w-52">
-            <input
-              type="text"
-              className="max-w-max flex h-10 rounded-lg bg-[#282828]
-                    text-[#8b8b8b] px-2"
-              maxLength={10}
-              placeholder="Club Name"
-              ref={nameInput}
-            />
-          </div>
-        )}
-        <div className="flex gap-y-4 gap-10 w-52">
-          <div className="flex flex-end gap-10 justify-end my-2 h-10">
-            <button
-              type="button"
-              className="bg-transparent text-white border rounded-md px-4 py-2 font-mono"
-              onClick={() => {
-                fetchRoomsState();
-              }}
-            >
-              Reset
-            </button>
-            <button
-              type="submit"
-              className="bg-[#006eff] text-white border border-[#006eff] rounded-md px-4 py-2 font-mono"
-            >
-              Submit
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <div>
-        <ConfirmBox
-          onCancel={() => {
-            setSubmitting(false);
-            selectedRoomsRef.current = [];
-          }}
-          isOpen={submitting}
-          onConfirm={confirmSubmission}
-          text="Submit"
-        />
       </div>
       {rooms?.length > 0 && dateArray?.length > 0 && okPressed ? (
-        <RoomTable
+        <RoomTablePublic
           rooms={rooms}
           dateArray={dateArray}
           getRoomState={getRoomState}
-          selected={selectedRoomsRef}
-          state={state}
         />
       ) : (
         <div className="w-full flex items-center justify-center bg-[#282828] rounded-lg border border-[#575757]">
@@ -360,4 +198,4 @@ const BookingForm = () => {
   );
 };
 
-export default BookingForm;
+export default BookingFormPublic;
