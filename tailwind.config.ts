@@ -10,13 +10,13 @@ export default {
   theme: {
     extend: {
       backdropBlur: {
-        md: '12px', // Customize the blur level
+        md: "12px", // Customize the blur level
       },
     },
   },
   variants: {
     extend: {
-      backdropBlur: ['responsive'],
+      backdropBlur: ["responsive"],
     },
   },
   plugins: [],

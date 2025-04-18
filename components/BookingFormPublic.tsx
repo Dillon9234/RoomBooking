@@ -1,13 +1,12 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import mongoose from "mongoose";
 import DatePickerModal from "./DatePickeModal";
 import ToastMessage from "./ToastMessage";
 import RoomTablePublic from "./BookingTablePublic";
 import IBookedRooms from "@/interfaces/IBookedRooms";
-import { useAuth } from "./AuthContext";
 
 const BookingFormPublic = () => {
   const [submitting, setSubmitting] = useState(false);
@@ -47,7 +46,7 @@ const BookingFormPublic = () => {
         const data = await response.json();
         setBuildings(data);
       } catch (error) {
-        console.error("Error fetching buildings "+error);
+        console.error("Error fetching buildings " + error);
       }
     };
     fetchBuildings();
@@ -58,12 +57,12 @@ const BookingFormPublic = () => {
       if (selectedBuilding === "Select") return;
       try {
         const response: Response = await fetch(
-          `/api/building/${selectedBuilding}`
+          `/api/building/${selectedBuilding}`,
         );
         const data = await response.json();
         setRooms(data.rooms);
       } catch (error) {
-        console.error("Error fetching rooms "+error);
+        console.error("Error fetching rooms " + error);
       }
     };
 
@@ -76,12 +75,12 @@ const BookingFormPublic = () => {
       const data = await response.json();
       setRoomsState(data);
     } catch (error) {
-      console.error("Error fetching booked rooms "+error);
+      console.error("Error fetching booked rooms " + error);
     }
   };
 
   const handleChangeBuilding = (
-    event: React.ChangeEvent<HTMLSelectElement>
+    event: React.ChangeEvent<HTMLSelectElement>,
   ) => {
     setSelectedBuilding(event.target.value);
     fetchRoomsState();
@@ -91,7 +90,7 @@ const BookingFormPublic = () => {
     const existingBookedRoom: IBookedRooms | undefined = roomsState.find(
       (bookedRoom: IBookedRooms) => {
         return bookedRoom.date === date && bookedRoom.roomId === roomId;
-      }
+      },
     );
 
     if (existingBookedRoom) {
@@ -101,7 +100,7 @@ const BookingFormPublic = () => {
   };
 
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = async (
-    event
+    event,
   ) => {
     event.preventDefault();
     if (submitting) return;
@@ -150,7 +149,7 @@ const BookingFormPublic = () => {
                   >
                     {building.name}
                   </option>
-                )
+                ),
               )}
           </select>
         </div>

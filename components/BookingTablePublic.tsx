@@ -11,7 +11,7 @@ interface RoomTableProps {
   dateArray: Date[];
   getRoomState: (
     date: string,
-    roomId: string
+    roomId: string,
   ) => { status: string; by: string };
 }
 
@@ -39,8 +39,11 @@ const RoomTablePublic = ({
               <th className="w-10 p-2 sticky left-0 top-0 z-20 outline outline-1  outline-[#575757] bg-[#282828]">
                 Dates
               </th>
-              {rooms.map((room:Room) => (
-                <th key={room.number} className="w-10 p-2 sticky top-0 z-10 outline outline-1 outline-[#575757] bg-[#282828]">
+              {rooms.map((room: Room) => (
+                <th
+                  key={room.number}
+                  className="w-10 p-2 sticky top-0 z-10 outline outline-1 outline-[#575757] bg-[#282828]"
+                >
                   {room.number}
                 </th>
               ))}
@@ -50,8 +53,8 @@ const RoomTablePublic = ({
             {dateArray.map((date) => (
               <tr key={formatDate(date)}>
                 <td className="w-10 p-1 text-center sticky left-0 z-10 outline outline-1 outline-[#575757] bg-[#282828] h-12 align-middle">
-                {formatDate(date).slice(0, 5)}
-              </td>
+                  {formatDate(date).slice(0, 5)}
+                </td>
                 {rooms.map((room: Room) => {
                   const status = getRoomState(formatDate(date), room._id);
                   return (

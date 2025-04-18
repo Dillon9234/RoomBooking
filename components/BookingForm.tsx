@@ -8,7 +8,6 @@ import DatePickerModal from "./DatePickeModal";
 import ToastMessage from "./ToastMessage";
 import RoomTable from "./BookingTable";
 import IBookedRooms from "@/interfaces/IBookedRooms";
-import { useAuth } from "./AuthContext";
 
 const BookingForm = () => {
   const [submitting, setSubmitting] = useState(false);
@@ -39,9 +38,7 @@ const BookingForm = () => {
   const [state, setState] = useState(Number);
   const nameInput = useRef<HTMLInputElement>(null);
 
-  const selectedRoomsRef = useRef<
-    { date: string; roomId: string }[]
-  >([]);
+  const selectedRoomsRef = useRef<{ date: string; roomId: string }[]>([]);
 
   const [toast, setToast] = useState<{
     text: string;
@@ -55,7 +52,7 @@ const BookingForm = () => {
         const data = await response.json();
         setBuildings(data);
       } catch (error) {
-        console.error("Error fetching buildings "+error);
+        console.error("Error fetching buildings " + error);
       }
     };
     setState(1);
@@ -67,12 +64,12 @@ const BookingForm = () => {
       if (selectedBuilding === "Select") return;
       try {
         const response: Response = await fetch(
-          `/api/building/${selectedBuilding}`
+          `/api/building/${selectedBuilding}`,
         );
         const data = await response.json();
         setRooms(data.rooms);
       } catch (error) {
-        console.error("Error fetching rooms "+error);
+        console.error("Error fetching rooms " + error);
       }
     };
 
@@ -86,25 +83,24 @@ const BookingForm = () => {
       const data = await response.json();
       setRoomsState(data);
     } catch (error) {
-      console.error("Error fetching booked rooms "+error);
+      console.error("Error fetching booked rooms " + error);
     }
   };
 
   const handleChangeBuilding = (
-    event: React.ChangeEvent<HTMLSelectElement>
+    event: React.ChangeEvent<HTMLSelectElement>,
   ) => {
     setSelectedBuilding(event.target.value);
     fetchRoomsState();
   };
 
   const getRoomState = (date: string, roomId: string) => {
-    const existingSelected:
-      | { date: string; roomId: string }
-      | undefined = selectedRoomsRef.current.find(
-      (bookedRoom: { date: string; roomId: string }) => {
-        return bookedRoom.date === date && bookedRoom.roomId === roomId;
-      }
-    );
+    const existingSelected: { date: string; roomId: string } | undefined =
+      selectedRoomsRef.current.find(
+        (bookedRoom: { date: string; roomId: string }) => {
+          return bookedRoom.date === date && bookedRoom.roomId === roomId;
+        },
+      );
 
     if (existingSelected) {
       return { status: state === 1 ? "Selected" : "DeleteSelected", by: "" };
@@ -112,7 +108,7 @@ const BookingForm = () => {
     const existingBookedRoom: IBookedRooms | undefined = roomsState.find(
       (bookedRoom: IBookedRooms) => {
         return bookedRoom.date === date && bookedRoom.roomId === roomId;
-      }
+      },
     );
 
     if (existingBookedRoom) {
@@ -122,7 +118,7 @@ const BookingForm = () => {
   };
 
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = async (
-    event
+    event,
   ) => {
     event.preventDefault();
     if (submitting) return;
@@ -161,13 +157,13 @@ const BookingForm = () => {
         text: state === 1 ? "Booked successfully!" : "Deleted successfully!",
         type: "success",
       });
-    }catch (error: unknown) {
-        if (error instanceof Error) {
-          setToast({ text: error.message, type: "error" });
-        } else {
-          setToast({ text: "An unexpected error occurred", type: "error" });
-        }
-    }finally {
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setToast({ text: error.message, type: "error" });
+      } else {
+        setToast({ text: "An unexpected error occurred", type: "error" });
+      }
+    } finally {
       setSubmitting(false);
       fetchRoomsState();
       clearNameInput();
@@ -210,8 +206,7 @@ const BookingForm = () => {
               defaultChecked
               disabled={!state}
               onClick={() => {
-                if(state == 1)
-                  return
+                if (state == 1) return;
                 setState(1);
                 selectedRoomsRef.current = [];
               }}
@@ -229,8 +224,7 @@ const BookingForm = () => {
               className="cursor-pointer text-[#9dabff] focus:ring-[#9dabff] focus:ring-0"
               disabled={!state}
               onClick={() => {
-                if(state == 2)
-                  return
+                if (state == 2) return;
                 setState(2);
                 selectedRoomsRef.current = [];
               }}
@@ -265,7 +259,7 @@ const BookingForm = () => {
                   >
                     {building.name}
                   </option>
-                )
+                ),
               )}
           </select>
         </div>

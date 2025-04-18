@@ -1,13 +1,13 @@
 interface IUser {
-    name:{
-        type:string,
-    },
-    hashedPassword:{
-        type:string,
-    },
-    role:{
-        type: string, 
-        enum: ["user", "admin"],
-    }
+  name: {
+    type: string;
+  };
+  hashedPassword: {
+    type: string;
+  };
+  role: {
+    type: string;
+    enum: ["user", "admin"];
+  };
 }
-export default IUser
+export default IUser;

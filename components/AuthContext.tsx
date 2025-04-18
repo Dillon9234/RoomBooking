@@ -1,5 +1,11 @@
-'use client';
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+"use client";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
 
 interface AuthContextType {
   authenticated: boolean;
@@ -25,12 +31,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const res = await fetch('/api/auth/user', {
-          method: 'GET',
+        const res = await fetch("/api/auth/user", {
+          method: "GET",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
-          credentials: 'include',
+          credentials: "include",
         });
         if (res.ok) {
           const userData = await res.json();
@@ -38,7 +44,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         } else {
           setAuthenticated(false, "");
         }
-      } catch (error) {
+      } catch {
         setAuthenticated(false, "");
       }
     };

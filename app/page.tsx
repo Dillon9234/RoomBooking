@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import { useAuth } from "@/components/AuthContext";
 import BookingForm from "@/components/BookingForm";
@@ -11,7 +11,7 @@ export default function Home() {
       <div className="flex text-5xl py-4 justify-center md:justify-normal">
         DASHBOARD
       </div>
-      {authenticated?(<BookingForm/>):(<BookingFormPublic/>)}
+      {authenticated ? <BookingForm /> : <BookingFormPublic />}
     </div>
   );
 }

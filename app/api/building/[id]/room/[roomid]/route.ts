@@ -17,12 +17,12 @@ export const GET = async (req: NextRequest, context: Context) => {
 
     await connectToDB();
     const room = await Room.findById(roomid);
-    
+
     if (!room) return new Response("room not found", { status: 404 });
 
     return new Response(JSON.stringify(room), { status: 201 });
   } catch (error) {
-    console.error("Failed to fetch room "+error)
+    console.error("Failed to fetch room " + error);
     return new Response("Failed to fetch room", { status: 500 });
   }
 };

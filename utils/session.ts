@@ -1,6 +1,5 @@
 import Session from "@/models/session";
 import { v4 as uuidv4 } from "uuid";
-import IUser from "@/interfaces/IUser";
 
 export async function createSession(userId: string) {
   const sessionId = uuidv4();

@@ -1,88 +1,90 @@
-'use client'
+"use client";
 
-import React, { useState } from 'react'
-import ToastMessage from './ToastMessage';
-import { useRouter } from 'next/navigation';
-import { useAuth } from './AuthContext';
+import React, { useState } from "react";
+import ToastMessage from "./ToastMessage";
+import { useRouter } from "next/navigation";
+import { useAuth } from "./AuthContext";
 
 const LoginForm = () => {
+  const router = useRouter();
 
-    const router = useRouter()
+  const [toast, setToast] = useState<{
+    text: string;
+    type: "success" | "error";
+  } | null>(null);
 
-    const [toast, setToast] = useState<{
-        text: string;
-        type: "success" | "error";
-      } | null>(null);
+  const { setAuthenticated } = useAuth();
 
-    const {setAuthenticated} = useAuth()
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const username = formData.get("username") as string;
+    const password = formData.get("password") as string;
 
-    const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        const formData = new FormData(e.currentTarget);
-        const username = formData.get('username') as string;
-        const password = formData.get('password') as string;
+    const showToast = (message: string, type: "success" | "error") => {
+      setToast({ text: message, type });
+    };
 
-        const showToast = (message: string, type: "success" | "error") => {
-            setToast({ text: message, type });
-          };
-    
-        try {
-          const res = await fetch('/api/auth/login', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            credentials: 'include',
-            body: JSON.stringify({ username, password }),
-          });
-    
-          if (res.ok) {
-            const user = await res.json()
-            setAuthenticated(true,user.role)
-            showToast("Login Successful","success")
-            router.push('/');
-          } else {
-            showToast("Invalid Credentials" ,"error")
-          }
-        } catch (error) {
-          showToast("Something went wrong","error")
-        }
-      };
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({ username, password }),
+      });
 
-    return (
-        <div className="flex items-center justify-center min-h-screen mt-[-10vh]">
-            <form onSubmit={handleLogin} className="flex flex-col gap-3 w-64 p-6 bg-black bg-opacity-60 rounded-2xl shadow-lg border">
-                <h2 className="text-white text-lg font-semibold text-center">Login</h2>
-                <input 
-                    type="text" 
-                    name="username" 
-                    required 
-                    placeholder="Username" 
-                    className="w-full p-2 rounded-md text-black focus:outline-none"
-                />
-                <input 
-                    type="password" 
-                    name="password" 
-                    required 
-                    placeholder="Password" 
-                    className="w-full p-2 rounded-md text-black focus:outline-none"
-                />
-                <button 
-                    type="submit" 
-                    className="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600 transition"
-                >
-                    Login
-                </button>
-            </form>
-            {toast && (
-                <ToastMessage
-                text={toast.text}
-                type={toast.type}
-                onClose={() => setToast(null)}
-                />
-            )}
-        </div>
-    )
-}
+      if (res.ok) {
+        const user = await res.json();
+        setAuthenticated(true, user.role);
+        showToast("Login Successful", "success");
+        router.push("/");
+      } else {
+        showToast("Invalid Credentials", "error");
+      }
+    } catch {
+      showToast("Something went wrong", "error");
+    }
+  };
 
-export default LoginForm
+  return (
+    <div className="flex items-center justify-center min-h-screen mt-[-10vh]">
+      <form
+        onSubmit={handleLogin}
+        className="flex flex-col gap-3 w-64 p-6 bg-black bg-opacity-60 rounded-2xl shadow-lg border"
+      >
+        <h2 className="text-white text-lg font-semibold text-center">Login</h2>
+        <input
+          type="text"
+          name="username"
+          required
+          placeholder="Username"
+          className="w-full p-2 rounded-md text-black focus:outline-none"
+        />
+        <input
+          type="password"
+          name="password"
+          required
+          placeholder="Password"
+          className="w-full p-2 rounded-md text-black focus:outline-none"
+        />
+        <button
+          type="submit"
+          className="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600 transition"
+        >
+          Login
+        </button>
+      </form>
+      {toast && (
+        <ToastMessage
+          text={toast.text}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
+    </div>
+  );
+};
+
+export default LoginForm;

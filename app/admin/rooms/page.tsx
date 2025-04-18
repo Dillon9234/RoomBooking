@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { useEffect, useState } from "react";
 import ToastMessage from "@/components/ToastMessage";
@@ -16,9 +16,9 @@ interface Room {
 }
 
 interface RoomDeconstructed extends Omit<Room, "building"> {
-    buildingId: string;
-    buildingName: string;
-    [key: string]: unknown;
+  buildingId: string;
+  buildingName: string;
+  [key: string]: unknown;
 }
 
 interface Toast {
@@ -28,15 +28,19 @@ interface Toast {
 
 const Rooms = () => {
   const [rooms, setRooms] = useState<Room[]>([]);
-  const [roomsDeconstructed, setRoomsDeconstructed] = useState<RoomDeconstructed[]>([]);
+  const [roomsDeconstructed, setRoomsDeconstructed] = useState<
+    RoomDeconstructed[]
+  >([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [isFormOpen, setIsFormOpen] = useState<boolean>(false);
-  const [selectedRoom, setSelectedRoom] = useState<RoomDeconstructed | null>(null);
+  const [selectedRoom, setSelectedRoom] = useState<RoomDeconstructed | null>(
+    null,
+  );
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [toast, setToast] = useState<Toast | null>(null);
   const maxRooms = 10;
-    
+
   useEffect(() => {
     const fetchRooms = async () => {
       try {
@@ -45,7 +49,8 @@ const Rooms = () => {
         const data: Room[] = await response.json();
         setRooms(data);
       } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : "An unknown error occurred";
+        const errorMessage =
+          err instanceof Error ? err.message : "An unknown error occurred";
         setError(errorMessage);
         showToast(errorMessage, "error");
       } finally {
@@ -59,11 +64,11 @@ const Rooms = () => {
     if (!rooms.length) return;
 
     const transformedRooms = rooms.map((room) => ({
-        _id: room._id,
-        number: room.number,
-        capacity: room.capacity,
-        buildingId: room.building?._id || "",
-        buildingName: room.building?.name || "Unknown",
+      _id: room._id,
+      number: room.number,
+      capacity: room.capacity,
+      buildingId: room.building?._id || "",
+      buildingName: room.building?.name || "Unknown",
     }));
 
     setRoomsDeconstructed(transformedRooms);
@@ -72,24 +77,28 @@ const Rooms = () => {
   useEffect(() => {
     if (selectedRoom && !isEditing) {
       const handleClickOutside = (event: MouseEvent) => {
-        const dropdownElements = document.querySelectorAll('[data-dropdown-menu]');
+        const dropdownElements = document.querySelectorAll(
+          "[data-dropdown-menu]",
+        );
         let clickedInsideDropdown = false;
-                
-        dropdownElements.forEach(element => {
+
+        dropdownElements.forEach((element) => {
           if (element.contains(event.target as Node)) {
             clickedInsideDropdown = true;
           }
         });
-                
-        const triggerButtons = document.querySelectorAll('[data-dropdown-trigger]');
-        triggerButtons.forEach(button => {
+
+        const triggerButtons = document.querySelectorAll(
+          "[data-dropdown-trigger]",
+        );
+        triggerButtons.forEach((button) => {
           if (button.contains(event.target as Node)) {
             clickedInsideDropdown = true;
           }
         });
-                
+
         if (!clickedInsideDropdown && !isEditing) {
-            setSelectedRoom(null);
+          setSelectedRoom(null);
         }
       };
 
@@ -106,10 +115,13 @@ const Rooms = () => {
 
   const handleDeleteRoom = async (room: RoomDeconstructed) => {
     try {
-      const response = await fetch(`/api/building/${room.buildingId}/room/${room._id}/edit`, {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-      });
+      const response = await fetch(
+        `/api/building/${room.buildingId}/room/${room._id}/edit`,
+        {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+        },
+      );
 
       if (response.ok) {
         const index = rooms.findIndex((b) => b._id === room._id);
@@ -124,39 +136,44 @@ const Rooms = () => {
         throw new Error(errorData.message || "Failed to delete building");
       }
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Failed to delete building";
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to delete building";
       showToast(errorMessage, "error");
     }
-  }
+  };
 
   const multipleDelete = async (selectedDeletingRooms: string[]) => {
     try {
-        const updatedRooms = [...rooms];
-        
-        for (const roomId of selectedDeletingRooms) {
-            const room =  rooms.find((room) => room._id == roomId)
-            const response = await fetch(`/api/building/${room?.building._id}/room/${roomId}`, {
-                method: 'DELETE',
-                headers: { 'Content-Type': 'application/json' },
-            });
+      const updatedRooms = [...rooms];
 
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || "Failed to delete room");
-            }
+      for (const roomId of selectedDeletingRooms) {
+        const room = rooms.find((room) => room._id == roomId);
+        const response = await fetch(
+          `/api/building/${room?.building._id}/room/${roomId}`,
+          {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+          },
+        );
 
-            const index = updatedRooms.findIndex((b) => b._id === roomId);
-            if (index !== -1) {
-                updatedRooms.splice(index, 1);
-            }
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || "Failed to delete room");
         }
-        setRooms(updatedRooms);
-        showToast(`Selected room(s) deleted successfully`, "success");
+
+        const index = updatedRooms.findIndex((b) => b._id === roomId);
+        if (index !== -1) {
+          updatedRooms.splice(index, 1);
+        }
+      }
+      setRooms(updatedRooms);
+      showToast(`Selected room(s) deleted successfully`, "success");
     } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : "Failed to delete room(s)";
-        showToast(errorMessage, "error");
+      const errorMessage =
+        err instanceof Error ? err.message : "Failed to delete room(s)";
+      showToast(errorMessage, "error");
     }
-};
+  };
 
   return (
     <div className="flex justify-center">
@@ -164,7 +181,11 @@ const Rooms = () => {
         {isFormOpen && (
           <CreateRoomForm
             isOpen={isFormOpen}
-            onClose={() => {setIsFormOpen(false); setIsEditing(false); setSelectedRoom(null)}}
+            onClose={() => {
+              setIsFormOpen(false);
+              setIsEditing(false);
+              setSelectedRoom(null);
+            }}
             onRoomAdded={(newRoom: Room) => {
               setRooms((prev) => [...prev, newRoom]);
               showToast(`Room created successfully`, "success");
@@ -172,8 +193,8 @@ const Rooms = () => {
             onEditRoom={(updatedRoom: Room) => {
               setRooms((prevRooms) =>
                 prevRooms.map((b) =>
-                  b._id === updatedRoom._id ? updatedRoom : b
-                )
+                  b._id === updatedRoom._id ? updatedRoom : b,
+                ),
               );
               showToast(`Room updated successfully`, "success");
             }}
@@ -187,18 +208,18 @@ const Rooms = () => {
         {error && <p className="text-red-500">{error}</p>}
         {!loading && !error && rooms.length === 0 && <p>No rooms available</p>}
         {rooms.length > 0 && (
-            <GenericTable 
-            data={roomsDeconstructed} 
+          <GenericTable
+            data={roomsDeconstructed}
             selectedItem={selectedRoom}
             isEditing={isEditing}
-            onDeleteItem={handleDeleteRoom} 
-            setSelectedItem={setSelectedRoom} 
-            setIsEditing={setIsEditing} 
-            multipleDelete={multipleDelete} 
-            setIsFormOpen={setIsFormOpen} 
+            onDeleteItem={handleDeleteRoom}
+            setSelectedItem={setSelectedRoom}
+            setIsEditing={setIsEditing}
+            multipleDelete={multipleDelete}
+            setIsFormOpen={setIsFormOpen}
             maxItems={maxRooms}
-            excludeFields={['_id','__v','buildingId']}
-            />
+            excludeFields={["_id", "__v", "buildingId"]}
+          />
         )}
         {toast && (
           <ToastMessage
