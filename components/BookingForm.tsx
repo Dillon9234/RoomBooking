@@ -98,16 +98,6 @@ const BookingForm = () => {
   };
 
   const getRoomState = (date: string, roomId: string) => {
-    const existingBookedRoom: IBookedRooms | undefined = roomsState.find(
-      (bookedRoom: IBookedRooms) => {
-        return bookedRoom.date === date && bookedRoom.roomId === roomId;
-      }
-    );
-
-    if (existingBookedRoom) {
-      return { status: "Occupied", by: existingBookedRoom.by };
-    }
-
     const existingSelected:
       | { date: string; roomId: string }
       | undefined = selectedRoomsRef.current.find(
@@ -119,7 +109,15 @@ const BookingForm = () => {
     if (existingSelected) {
       return { status: state === 1 ? "Selected" : "DeleteSelected", by: "" };
     }
+    const existingBookedRoom: IBookedRooms | undefined = roomsState.find(
+      (bookedRoom: IBookedRooms) => {
+        return bookedRoom.date === date && bookedRoom.roomId === roomId;
+      }
+    );
 
+    if (existingBookedRoom) {
+      return { status: "Occupied", by: existingBookedRoom.by };
+    }
     return { status: "Unselected", by: "" };
   };
 
@@ -202,13 +200,7 @@ const BookingForm = () => {
     >
       <div className="flex flex-col items-center">
         <div className="flex flex-row gap-10 justify my-2 bg-transparent border text-white px-4 py-2 rounded-lg h-10 max-w-max">
-          <div
-            className="flex items-center"
-            onClick={() => {
-              setState(1);
-              selectedRoomsRef.current = [];
-            }}
-          >
+          <div className="flex items-center">
             <input
               id="inline-radio"
               type="radio"
@@ -217,18 +209,18 @@ const BookingForm = () => {
               className="cursor-pointer text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 focus:ring-0"
               defaultChecked
               disabled={!state}
+              onClick={() => {
+                if(state == 1)
+                  return
+                setState(1);
+                selectedRoomsRef.current = [];
+              }}
             />
             <label htmlFor="inline-radio" className="ms-2 cursor-pointer">
               Book
             </label>
           </div>
-          <div
-            className="flex items-center"
-            onClick={() => {
-              setState(2);
-              selectedRoomsRef.current = [];
-            }}
-          >
+          <div className="flex items-center">
             <input
               id="inline-2-radio"
               type="radio"
@@ -236,6 +228,12 @@ const BookingForm = () => {
               name="inline-radio-group"
               className="cursor-pointer text-[#9dabff] focus:ring-[#9dabff] focus:ring-0"
               disabled={!state}
+              onClick={() => {
+                if(state == 2)
+                  return
+                setState(2);
+                selectedRoomsRef.current = [];
+              }}
             />
             <label htmlFor="inline-2-radio" className="ms-2 cursor-pointer">
               Cancel
