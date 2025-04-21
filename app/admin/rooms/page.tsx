@@ -47,7 +47,16 @@ const Rooms = () => {
         const response = await fetch("/api/rooms");
         if (!response.ok) throw new Error("Failed to fetch buildings");
         const data: Room[] = await response.json();
-        setRooms(data);
+        const sortedRooms = [...data].sort((a, b) => {
+          const buildingNameA = a.building?.name || "Unknown";
+          const buildingNameB = b.building?.name || "Unknown";
+          const buildingNameComparison = buildingNameA.localeCompare(buildingNameB);
+          if (buildingNameComparison === 0) {
+            return parseInt(a.number) - parseInt(b.number);
+          }
+          return buildingNameComparison;
+        });
+        setRooms(sortedRooms);
       } catch (err) {
         const errorMessage =
           err instanceof Error ? err.message : "An unknown error occurred";
@@ -149,7 +158,7 @@ const Rooms = () => {
       for (const roomId of selectedDeletingRooms) {
         const room = rooms.find((room) => room._id == roomId);
         const response = await fetch(
-          `/api/building/${room?.building._id}/room/${roomId}`,
+          `/api/building/${room?.building._id}/room/${roomId}/edit`,
           {
             method: "DELETE",
             headers: { "Content-Type": "application/json" },
@@ -187,15 +196,39 @@ const Rooms = () => {
               setSelectedRoom(null);
             }}
             onRoomAdded={(newRoom: Room) => {
-              setRooms((prev) => [...prev, newRoom]);
+              setRooms((prev) => {
+                const updatedRooms = [...prev, newRoom];
+                return updatedRooms.sort((a, b) => {
+                  const buildingNameA = a.building?.name || "Unknown";
+                  const buildingNameB = b.building?.name || "Unknown";
+                  const buildingNameComparison = buildingNameA.localeCompare(buildingNameB);
+                  
+                  if (buildingNameComparison === 0) {
+                    return parseInt(a.number) - parseInt(b.number);
+                  }
+                  
+                  return buildingNameComparison;
+                });
+              });
               showToast(`Room created successfully`, "success");
             }}
             onEditRoom={(updatedRoom: Room) => {
-              setRooms((prevRooms) =>
-                prevRooms.map((b) =>
-                  b._id === updatedRoom._id ? updatedRoom : b,
-                ),
-              );
+              setRooms((prevRooms) => {
+                const updatedRooms = prevRooms.map((b) =>
+                  b._id === updatedRoom._id ? updatedRoom : b
+                );
+                return updatedRooms.sort((a, b) => {
+                  const buildingNameA = a.building?.name || "Unknown";
+                  const buildingNameB = b.building?.name || "Unknown";
+                  const buildingNameComparison = buildingNameA.localeCompare(buildingNameB);
+                  
+                  if (buildingNameComparison === 0) {
+                    return parseInt(a.number) - parseInt(b.number);
+                  }
+                  
+                  return buildingNameComparison;
+                });
+              });
               showToast(`Room updated successfully`, "success");
             }}
             onError={(errorMessage: string) => {

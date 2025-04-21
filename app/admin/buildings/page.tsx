@@ -28,26 +28,28 @@ const Buildings = (): React.JSX.Element => {
   );
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [toast, setToast] = useState<ToastMessage | null>(null);
-  const maxBuildings = 4;
+  const maxBuildings = 10;
 
   useEffect(() => {
-    const fetchBuildings = async (): Promise<void> => {
+    const fetchData = async () => {
       try {
         const response = await fetch("/api/building");
         if (!response.ok) throw new Error("Failed to fetch buildings");
         const data = await response.json();
-        setBuildings(data);
+        const sortedData = [...data].sort((a, b) => {
+          return a.name.localeCompare(b.name);
+        });
+        setBuildings(sortedData);
       } catch (err) {
-        const error =
-          err instanceof Error ? err.message : "An unknown error occurred";
+        const error = err instanceof Error ? err.message : "An unknown error occurred";
         setError(error);
         showToast(error, "error");
       } finally {
         setLoading(false);
       }
     };
-    fetchBuildings();
-  }, []);
+    fetchData();
+  }, []);  
 
   const showToast = (message: string, type: "success" | "error"): void => {
     setToast({ text: message, type });
@@ -123,23 +125,31 @@ const Buildings = (): React.JSX.Element => {
               setSelectedBuilding(null);
             }}
             onBuildingAdded={(newBuilding: Building) => {
-              setBuildings((prev) => [...prev, newBuilding]);
-              showToast(
-                `Building "${newBuilding.name}" created successfully`,
-                "success",
-              );
-            }}
-            onEditBuilding={(updatedBuilding: Building) => {
-              setBuildings((prevBuildings) =>
-                prevBuildings.map((b) =>
-                  b._id === updatedBuilding._id ? updatedBuilding : b,
-                ),
-              );
-              showToast(
-                `Building "${updatedBuilding.name}" updated successfully`,
-                "success",
-              );
-            }}
+                setBuildings((prev) => {
+                  const updatedBuildings = [...prev, newBuilding];
+                  return updatedBuildings.sort((a, b) => 
+                    a.name.localeCompare(b.name)
+                  );
+                });
+                showToast(
+                  `Building "${newBuilding.name}" created successfully`,
+                  "success",
+                );
+              }}
+              onEditBuilding={(updatedBuilding: Building) => {
+                setBuildings((prevBuildings) => {
+                  const updatedBuildings = prevBuildings.map((b) =>
+                    b._id === updatedBuilding._id ? updatedBuilding : b
+                  );
+                  return updatedBuildings.sort((a, b) => 
+                    a.name.localeCompare(b.name)
+                  );
+                });
+                showToast(
+                  `Building "${updatedBuilding.name}" updated successfully`,
+                  "success",
+                );
+              }}              
             onError={(errorMessage: string) => {
               showToast(errorMessage, "error");
             }}
